@@ -20,12 +20,22 @@ def hello_world():
 
 @app.route('/authorization', methods=['GET'])
 def authorization():
+    """
+    Authorization refers to the user granting access to his/her Spotify data.
+    :return: String
+        A url which points to the Spotify app authorization page.
+    """
 
     return redirect(spotify_api.request_authorization_to_access_data_url())
 
 
 @app.route('/authentication', methods=['GET'])
 def authentication():
+    """
+    Authentication refers to the user's access and refresh keys which are stored and used to send requests to the
+    Spotify Web API.
+    :return: Response object (if successful) that redirects the user to another location. Dict (if unsuccessful).
+    """
 
     # The user pressed 'Cancel' on the Spotify authorization page.
 
