@@ -14,11 +14,9 @@ class SpotifyAPIHandlerTestCase(unittest.TestCase):
 
         print(response)
 
-
     def test_authentication(self):
 
         spotify_api_handler = SpotifyAPIHandler()
-
 
 
 if __name__ == '__main__':

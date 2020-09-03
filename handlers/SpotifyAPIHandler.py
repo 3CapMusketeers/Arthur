@@ -15,7 +15,7 @@ class SpotifyAPIHandler:
 
         spotify_api = SpotifyAPI.get_instance()
 
-        # Set access and refresh tokens.
+        # Get and set access and refresh tokens.
 
         if spotify_api.access_token is None and 'code' in args and args['code'] is not None:
 

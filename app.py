@@ -11,21 +11,41 @@ spotify_api = SpotifyAPI()
 @app.route('/')
 def hello_world():
 
+    if spotify_api.access_token is None and spotify_api.refresh_token is None:
+
+        return redirect('/authorization')
+
     return {'hello': 'world'}
+
+
+@app.route('/authorization', methods=['GET'])
+def authorization():
+
+    return redirect(spotify_api.request_authorization_to_access_data_url())
 
 
 @app.route('/authentication', methods=['GET'])
 def authentication():
 
-    # TODO: Handle case when user does NOT authorize the app
+    # The user pressed 'Cancel' on the Spotify authorization page.
+
+    if 'error' in request.args and request.args['error'] == 'access_denied':
+
+        return {'error': 'The user did not authorized this app to access data.'}
+
+    # Authenticate user
 
     spotify_api_handler = SpotifyAPIHandler()
 
-    authenticated = spotify_api_handler.authenticate(request.args)
+    if spotify_api_handler.authenticate(request.args):
 
-    if not authenticated:
+        # If the user was authenticated, return to home page.
 
-        return redirect(spotify_api.request_authorization_to_access_data_url())
+        return redirect('/')
+
+    # The user was not authenticated.
+
+    return {'error': 'There was a problem authenticating the user.'}
 
 
 if __name__ == '__main__':
