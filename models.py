@@ -29,11 +29,15 @@ class Playlist(db.Model):
 
     href = db.Column(db.String())
 
-    def __init__(self, id, display_name):
+    def __init__(self, id, user_id, uri, href):
 
         self.id = id
 
-        self.display_name = display_name
+        self.user_id = user_id
+
+        self.uri = uri
+
+        self.href = href
 
     def __repr__(self):
         return '<id %s>' % self.id
