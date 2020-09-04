@@ -15,17 +15,29 @@ migrate = Migrate(app, db)
 
 from models import *
 
+from handlers import DBHandler as dh
+
 spotify_api = SpotifyAPI()
 
 
 @app.route('/')
 def hello_world():
 
+    # Verify user is authenticated. Otherwise authenticate.
+
     if spotify_api.access_token is None and spotify_api.refresh_token is None:
 
         return redirect('/authorization')
 
-    return {'hello': 'world'}
+    # Get user profile and insert into db if not already.
+
+    user = spotify_api.get_user_profile()
+
+    db_handler = dh.DBHandler(db)
+
+    db_handler.insert_user(user)
+
+    return {'user': user['display_name']}
 
 
 @app.route('/authorization', methods=['GET'])
