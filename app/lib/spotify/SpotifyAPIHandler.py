@@ -1,5 +1,4 @@
-from SpotifyAPI import SpotifyAPI
-
+from .SpotifyAPI import SpotifyAPI
 
 class SpotifyAPIHandler:
 

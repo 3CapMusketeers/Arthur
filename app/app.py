@@ -1,12 +1,11 @@
 import os
 from flask import Flask, redirect, request
-from SpotifyAPI import SpotifyAPI
-from handlers.SpotifyAPIHandler import SpotifyAPIHandler
+from lib.spotify.SpotifyAPIHandler import SpotifyAPIHandler
+from lib.spotify.SpotifyAPI import SpotifyAPI
 
 app = Flask(__name__)
 
 spotify_api = SpotifyAPI()
-
 
 @app.route('/')
 def hello_world():

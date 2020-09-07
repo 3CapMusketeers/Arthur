@@ -3,7 +3,6 @@ import json
 import requests
 import urllib
 
-
 class SpotifyAPI:
     """
     A singleton class for Spotify's API.
@@ -12,25 +11,21 @@ class SpotifyAPI:
     __instance__ = None
 
     # Urls
-
     BASE_URL = os.getenv('BASE_URL')
     AUTH_URL = os.getenv('AUTH_URL')
     API_TOKEN_URL = os.getenv('API_TOKEN_URL')
-    REDIRECT_URI = os.getenv('REDIRECT_URI')
+    REDIRECT_URI = urllib.parse.quote(os.getenv('REDIRECT_URI'))
 
     # Client ids
-
     CLIENT_ID = os.getenv('CLIENT_ID')
     CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
     def __init__(self):
-
         if SpotifyAPI.__instance__ is None:
 
             SpotifyAPI.__instance__ = self
 
         else:
-
             Exception('Cannot create a new SpotifyAPI instance. Use \'get_instance() instead.\'')
 
         self.access_token = None
