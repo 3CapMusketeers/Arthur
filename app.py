@@ -13,9 +13,9 @@ db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)
 
-from models import *
-
 from handlers import DBHandler as dh
+
+from models import *
 
 spotify_api = SpotifyAPI()
 
@@ -25,13 +25,17 @@ def hello_world():
 
     # Verify user is authenticated. Otherwise authenticate.
 
-    if spotify_api.access_token is None and spotify_api.refresh_token is None:
+    if not spotify_api.is_authenticated():
 
         return redirect('/authorization')
 
     # Get user profile and insert into db if not already.
 
     user = spotify_api.get_user_profile()
+
+    if 'error' in user:
+
+        return user
 
     db_handler = dh.DBHandler(db)
 

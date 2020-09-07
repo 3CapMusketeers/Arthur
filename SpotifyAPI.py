@@ -40,7 +40,7 @@ class SpotifyAPI:
 
         url = self.BASE_URL + '/me'
 
-        header = {'Authorization': 'Bearer ' + self.access_token}
+        header = {'Authorization': 'Bearer ' + self.access_token if self.access_token is not None else ''}
 
         request = requests.get(url, headers=header).json()
 
@@ -114,6 +114,10 @@ class SpotifyAPI:
         """
 
         self.refresh_token = token
+
+    def is_authenticated(self):
+
+        return self.access_token and self.refresh_token
 
     @staticmethod
     def get_instance():
