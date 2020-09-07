@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+import urllib
 
 
 class SpotifyAPI:
@@ -12,15 +13,22 @@ class SpotifyAPI:
 
     # Urls
 
-    BASE_URL = os.environ.get('BASE_URL')
-    AUTH_URL = os.environ.get('AUTH_URL')
-    API_TOKEN_URL = os.environ.get('API_TOKEN_URL')
-    REDIRECT_URI = os.environ.get('REDIRECT_URI')
+    # export BASE_URL=https://api.spotify.com
+    # export AUTH_URL=https://accounts.spotify.com/authorize
+    # export API_TOKEN_URL=https://accounts.spotify.com/api/token
+    # export REDIRECT_URI=127.0.0.1:5000/home
+    # export CLIENT_ID=369a6c4b828e4dda98c6a47e891d5b2f
+    # export CLIENT_SECRET=5be944b9cb9b4897849438c3f586f9e5
+
+    BASE_URL = os.getenv('BASE_URL')
+    AUTH_URL = os.getenv('AUTH_URL')
+    API_TOKEN_URL = os.getenv('API_TOKEN_URL')
+    REDIRECT_URI = os.getenv('REDIRECT_URI')
 
     # Client ids
 
-    CLIENT_ID = os.environ.get('CLIENT_ID')
-    CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
+    CLIENT_ID = os.getenv('CLIENT_ID')
+    CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
     def __init__(self):
 
