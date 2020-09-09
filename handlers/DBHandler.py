@@ -12,6 +12,22 @@ class DBHandler:
 
         return models.Playlist.query.get(id)
 
+    def get_playlists(self, user_id):
+        """
+        Returns all the playlist that belongs to the user with specified user_id.
+        :param user_id: Int
+            The id of the user
+        :return: Playlist object or None
+        """
+
+        user = self.get_user(user_id)
+
+        if user:
+
+            return user.playlists
+
+        return None
+
     def get_user(self, id):
 
         return models.User.query.get(id)
