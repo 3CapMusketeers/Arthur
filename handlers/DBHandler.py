@@ -12,7 +12,11 @@ class DBHandler:
 
         return models.Playlist.query.get(id)
 
-    def get_playlists(self, user_id):
+    def get_user(self, id):
+
+        return models.User.query.get(id)
+
+    def get_user_playlists(self, user_id):
         """
         Returns all the playlist that belongs to the user with specified user_id.
         :param user_id: Int
@@ -27,10 +31,6 @@ class DBHandler:
             return user.playlists
 
         return None
-
-    def get_user(self, id):
-
-        return models.User.query.get(id)
 
     def insert_playlist(self, playlist, user_id):
         """

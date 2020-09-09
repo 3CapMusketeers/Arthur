@@ -25,11 +25,32 @@ class DBHandlerTestCase(unittest.TestCase):
         Test that the 'insert_user' function can insert a user when no other user with the same id exists.
         """
 
-        db_handler = DBHandler(db)
+        user = {'id': 'johndoe', 'display_name': 'johndoe'}
+
+        self.insert_user_test_wrapper(user)
+
+    def test_insert_playlist(self):
+        """
+        Test that the 'insert_playlist' function can insert a playlist when no other playlist with the same id exists.
+        """
 
         # Insert a user into the database.
 
         user = {'id': 'johndoe', 'display_name': 'johndoe'}
+
+        returned_user = self.insert_user_test_wrapper(user)
+
+        # Insert a playlist into the database
+
+        playlist = {'id': 'johndoesplaylist', 'uri': 'johndoesplaylisturi', 'href': 'johndoesplaylisthref'}
+
+        self.insert_playlist_test_wrapper(playlist, returned_user.id)
+
+    def insert_user_test_wrapper(self, user):
+
+        db_handler = DBHandler(db)
+
+        # Insert a user into the database.
 
         was_inserted = db_handler.insert_user(user)
 
@@ -49,26 +70,15 @@ class DBHandlerTestCase(unittest.TestCase):
 
         self.assertFalse(was_inserted)
 
-    def test_insert_playlist(self):
-        """
-        Test that the 'insert_user' function can insert a user when no other user with the same id exists.
-        """
+        return returned_user
+
+    def insert_playlist_test_wrapper(self, playlist, user_id):
 
         db_handler = DBHandler(db)
 
-        # Insert a user into the database.
-
-        user = {'id': 'johndoe', 'display_name': 'johndoe'}
-
-        db_handler.insert_user(user)
-
-        returned_user = db_handler.get_user(user['id'])
-
         # Insert a playlist into the database
 
-        playlist = {'id': 'johndoesplaylist', 'uri': 'johndoesplaylisturi', 'href': 'johndoesplaylisthref'}
-
-        was_inserted = db_handler.insert_playlist(playlist, returned_user.id)
+        was_inserted = db_handler.insert_playlist(playlist, user_id)
 
         returned_playlist = db_handler.get_playlist(playlist['id'])
 
@@ -85,6 +95,8 @@ class DBHandlerTestCase(unittest.TestCase):
         # Assert that the playlist was not inserted.
 
         self.assertFalse(was_inserted)
+
+        return returned_playlist
 
 
 if __name__ == '__main__':
