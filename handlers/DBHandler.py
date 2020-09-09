@@ -8,9 +8,53 @@ class DBHandler:
 
         self.db = db
 
+    def get_playlist(self, id):
+
+        return models.Playlist.query.get(id)
+
     def get_user(self, id):
 
         return models.User.query.get(id)
+
+    def insert_playlist(self, playlist, user_id):
+        """
+        Inserts a playlist into the database.
+        :param playlist: Dict
+            The playlist dict. See Playlist model.
+        :param user_id: String
+            The id of the user for which the playlist belongs to.
+        :return: Bool
+            True if the playlist was inserted into the database.
+        """
+
+        # Verify that the user exists
+
+        if not self.get_user(user_id):
+
+            return False
+
+        was_inserted = False
+
+        db = self.db
+
+        if playlist and 'id' in playlist and 'uri' in playlist and 'href' in playlist and not \
+                self.get_user(playlist['id']):
+
+            db.session.add(models.Playlist(playlist['id'], user_id, playlist['uri'], playlist['href']))
+
+            try:
+
+                db.session.commit()
+
+                was_inserted = True
+
+            except exc.SQLAlchemyError:
+
+                db.session.rollback()
+
+            db.session.close()
+
+        return was_inserted
 
     def insert_user(self, user):
         """
@@ -25,7 +69,7 @@ class DBHandler:
 
         db = self.db
 
-        if user and 'id' in user and 'display_name' in user and not models.User.query.get(user['id']):
+        if user and 'id' in user and 'display_name' in user and not self.get_user(user['id']):
 
             db.session.add(models.User(user['id'], user['display_name']))
 
