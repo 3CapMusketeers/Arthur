@@ -46,6 +46,12 @@ class DBHandlerTestCase(unittest.TestCase):
 
         self.insert_playlist_test_wrapper(playlist, returned_user.id)
 
+        # Insert a playlist using non-existing user.
+
+        playlist_2 = {'id': 'johndoesplaylist2', 'uri': 'johndoesplaylisturi2', 'href': 'johndoesplaylisthref2'}
+
+        self.insert_playlist_test_wrapper(playlist_2, 'janedoe', valid_user=False)
+
     def insert_user_test_wrapper(self, user):
 
         db_handler = DBHandler(db)
@@ -72,7 +78,7 @@ class DBHandlerTestCase(unittest.TestCase):
 
         return returned_user
 
-    def insert_playlist_test_wrapper(self, playlist, user_id):
+    def insert_playlist_test_wrapper(self, playlist, user_id, valid_user=True):
 
         db_handler = DBHandler(db)
 
@@ -82,21 +88,29 @@ class DBHandlerTestCase(unittest.TestCase):
 
         returned_playlist = db_handler.get_playlist(playlist['id'])
 
-        # Assert that the playlist was inserted.
+        if valid_user:
 
-        self.assertTrue(was_inserted)
+            # Assert that the playlist was inserted.
 
-        self.assertEqual(returned_playlist.id, playlist['id'])
+            self.assertTrue(was_inserted)
 
-        # Insert the same playlist (same id) again.
+            self.assertEqual(returned_playlist.id, playlist['id'])
 
-        was_inserted = db_handler.insert_user(playlist)
+            # Insert the same playlist (same id) again.
 
-        # Assert that the playlist was not inserted.
+            was_inserted = db_handler.insert_user(playlist)
+
+            # Assert that the playlist was not inserted.
+
+            self.assertFalse(was_inserted)
+
+            return returned_playlist
+
+        # Assert that the playlist was NOT inserted.
 
         self.assertFalse(was_inserted)
 
-        return returned_playlist
+        return None
 
 
 if __name__ == '__main__':
