@@ -8,6 +8,48 @@ class DBHandler:
 
         self.db = db
 
+    def delete_user(self, user_id):
+        """
+        Cascade deletes a user from the database.
+        :param user_id: String
+        :return: Bool
+            True if the user was deleted. False if otherwise.
+        """
+
+        return self.delete(self.get_user(user_id))
+
+    def delete_playlist(self, playlist_id):
+        """
+        Deletes a playlist from the database.
+        :param playlist_id: String
+        :return: Bool
+            True of the playlist was deleted. False if otherwise.
+        """
+
+        return self.delete(self.get_playlist(playlist_id))
+
+    def delete(self, obj):
+
+        was_deleted = False
+
+        db = self.db
+
+        db.session.delete(obj)
+
+        try:
+
+            db.session.commit()
+
+            was_deleted = True
+
+        except exc.SQLAlchemyError:
+
+            db.session.rollback()
+
+        db.session.close()
+
+        return was_deleted
+
     def get_playlist(self, id):
 
         return models.Playlist.query.get(id)
