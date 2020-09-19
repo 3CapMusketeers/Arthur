@@ -1,6 +1,7 @@
 import os
 import unittest
 from sqlalchemy import create_engine
+from models import *
 from handlers.DBHandler import DBHandler
 from app import app, db
 
@@ -20,6 +21,92 @@ class DBHandlerTestCase(unittest.TestCase):
 
         db.metadata.create_all(bind=engine)
 
+    def test_delete_playlist(self):
+        """
+        Test that the 'delete_playlist' function can delete a playlist.
+        """
+        with app.app_context():
+
+            # Assert that there are no playlists in the db
+
+            self.assertTrue(not Playlist.query.all())
+
+            # Create a user with three playlists
+
+            user_id = 'johndoe'
+
+            self.create_user(id=user_id)
+
+            playlist_ids = ['playlistA', 'playlistB', 'playlistC']
+
+            for id in playlist_ids:
+
+                self.create_playlist(user_id, id=id)
+
+            # Assert that there are exactly 3 playlists in the db
+
+            self.assertTrue(len(Playlist.query.all()) == 3)
+
+            # Delete each playlist one by one
+
+            db_handler = DBHandler()
+
+            for id in playlist_ids:
+
+                db_handler.delete_playlist(id)
+
+                # Assert that the playlist was deleted
+
+                self.assertIsNone(Playlist.query.get(id))
+
+            # Assert that there are no playlists in the db
+
+            self.assertTrue(not Playlist.query.all())
+
+
+    def test_delete_user(self):
+        """
+        Test that the 'delete_user' function can delete a user and all of its playlists.
+        """
+        with app.app_context():
+
+            self.assertTrue(not Playlist.query.all())
+
+            user_id = 'johndoe'
+
+            user = self.create_user(id=user_id)
+
+            for id in ['playlistA', 'playlistB', 'playlistC']:
+
+                self.create_playlist(user_id, id=id)
+
+            db_handler = DBHandler()
+
+            user = db_handler.get_user(user_id)
+
+            # Assert that the user owns 3 playlists
+
+            self.assertTrue(len(user.playlists) == 3)
+
+            # Assert that there are only 3 playlists in the db
+
+            playlists = Playlist.query.all()
+
+            self.assertTrue(len(playlists) == 3)
+
+            # Delete the user
+
+            db_handler.delete_user(user.id)
+
+            # Assert that the user does not exist
+
+            self.assertIsNone(User.query.get(user_id))
+
+            # Assert that there are no playlists in the database
+
+            self.assertTrue(not Playlist.query.all())
+
+
     def test_insert_user(self):
         """
         Test that the 'insert_user' function can insert a user when no other user with the same id exists.
@@ -30,6 +117,7 @@ class DBHandlerTestCase(unittest.TestCase):
             user = {'id': 'johndoe', 'display_name': 'johndoe'}
 
             self.insert_user_test_wrapper(user)
+
 
     def test_insert_playlist(self):
         """
@@ -115,6 +203,38 @@ class DBHandlerTestCase(unittest.TestCase):
         self.assertFalse(was_inserted)
 
         return None
+
+    def create_playlist(self, user_id, id='johndoesplaylist', uri='johndoesplaylisturi', href='johndoesplaylisthref'):
+
+        playlist = {'id': id, 'uri': uri, 'href': href}
+
+        db_handler = DBHandler()
+
+        # Insert a playlist into the database
+
+        db_handler.insert_playlist(playlist, user_id)
+
+        playlist = db_handler.get_playlist(playlist['id'])
+
+        self.assertIsNotNone(playlist)
+
+        return playlist
+
+    def create_user(self, id='johndoe', display_name='johndoe'):
+
+        user = {'id': id, 'display_name': display_name}
+
+        db_handler = DBHandler()
+
+        # Insert the user into the database.
+
+        db_handler.insert_user(user)
+
+        user = db_handler.get_user(user['id'])
+
+        self.assertIsNotNone(user)
+
+        return user
 
 
 if __name__ == '__main__':
