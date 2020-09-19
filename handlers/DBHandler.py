@@ -12,6 +12,7 @@ class DBHandler:
         """
         Cascade deletes a user from the database.
         :param user_id: String
+            The id of the user.
         :return: Bool
             True if the user was deleted. False if otherwise.
         """
@@ -22,6 +23,7 @@ class DBHandler:
         """
         Deletes a playlist from the database.
         :param playlist_id: String
+            The id of the playlist.
         :return: Bool
             True of the playlist was deleted. False if otherwise.
         """
@@ -61,7 +63,7 @@ class DBHandler:
     def get_user_playlists(self, user_id):
         """
         Returns all the playlist that belongs to the user with specified user_id.
-        :param user_id: Int
+        :param user_id: String
             The id of the user
         :return: Playlist object or None
         """
