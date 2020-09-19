@@ -2,10 +2,14 @@ import os
 from flask import Flask, redirect, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_admin import Admin
+from views.admin import *
 from SpotifyAPI import SpotifyAPI
 from handlers.SpotifyAPIHandler import SpotifyAPIHandler
 
 app = Flask(__name__)
+
+app.secret_key = os.environ.get('APP_SECRET_KEY')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
 
@@ -18,6 +22,14 @@ from handlers import DBHandler as dh
 from models import *
 
 spotify_api = SpotifyAPI()
+
+# Admin page
+
+admin = Admin(app, name='Camelot Admin', template_mode='bootstrap3', index_view=AdminHomeView())
+
+admin.add_view(UserView(User, db.session))
+
+admin.add_view(PlaylistView(Playlist, db.session))
 
 
 @app.route('/')

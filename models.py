@@ -16,7 +16,7 @@ class User(db.Model):
         self.display_name = display_name
 
     def __repr__(self):
-        return '<User: %s, Id: %s>' % self.display_name, self.id
+        return '<User: %s, Id: %s>' % (self.display_name, self.id, )
 
 
 class Playlist(db.Model):
