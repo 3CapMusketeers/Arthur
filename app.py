@@ -33,7 +33,7 @@ admin.add_view(PlaylistView(Playlist, db.session))
 
 
 @app.route('/')
-def hello_world():
+def home():
 
     # Verify user is authenticated. Otherwise authenticate.
 

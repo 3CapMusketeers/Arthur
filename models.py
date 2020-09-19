@@ -7,7 +7,7 @@ class User(db.Model):
 
     display_name = db.Column(db.String())
 
-    playlists = db.relationship('Playlist', backref='user')
+    playlists = db.relationship('Playlist', cascade="all,delete", backref='user')
 
     def __init__(self, id, display_name):
 
