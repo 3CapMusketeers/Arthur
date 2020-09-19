@@ -1,12 +1,9 @@
 import models
 from sqlalchemy import exc
+from shared import db
 
 
 class DBHandler:
-
-    def __init__(self, db):
-
-        self.db = db
 
     def delete_user(self, user_id):
         """
@@ -33,8 +30,6 @@ class DBHandler:
     def delete(self, obj):
 
         was_deleted = False
-
-        db = self.db
 
         db.session.delete(obj)
 
@@ -95,8 +90,6 @@ class DBHandler:
 
         was_inserted = False
 
-        db = self.db
-
         if playlist and 'id' in playlist and 'uri' in playlist and 'href' in playlist and not \
                 self.get_user(playlist['id']):
 
@@ -126,8 +119,6 @@ class DBHandler:
         """
 
         was_inserted = False
-
-        db = self.db
 
         if user and 'id' in user and 'display_name' in user and not self.get_user(user['id']):
 

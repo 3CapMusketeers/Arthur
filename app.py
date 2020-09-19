@@ -1,11 +1,14 @@
 import os
 from flask import Flask, redirect, request
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_admin import Admin
+from models import *
 from views.admin import *
-from SpotifyAPI import SpotifyAPI
+from shared import *
+from handlers.DBHandler import *
 from handlers.SpotifyAPIHandler import SpotifyAPIHandler
+
+# app configs
 
 app = Flask(__name__)
 
@@ -13,15 +16,11 @@ app.secret_key = os.environ.get('APP_SECRET_KEY')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
 
-db = SQLAlchemy(app)
+# db init
+
+db.init_app(app)
 
 migrate = Migrate(app, db)
-
-from handlers import DBHandler as dh
-
-from models import *
-
-spotify_api = SpotifyAPI()
 
 # Admin page
 
@@ -49,7 +48,7 @@ def home():
 
         return user
 
-    db_handler = dh.DBHandler(db)
+    db_handler = DBHandler()
 
     db_handler.insert_user(user)
 

@@ -2,7 +2,7 @@ import os
 import unittest
 from sqlalchemy import create_engine
 from handlers.DBHandler import DBHandler
-from app import db
+from app import app, db
 
 
 class DBHandlerTestCase(unittest.TestCase):
@@ -25,36 +25,40 @@ class DBHandlerTestCase(unittest.TestCase):
         Test that the 'insert_user' function can insert a user when no other user with the same id exists.
         """
 
-        user = {'id': 'johndoe', 'display_name': 'johndoe'}
+        with app.app_context():
 
-        self.insert_user_test_wrapper(user)
+            user = {'id': 'johndoe', 'display_name': 'johndoe'}
+
+            self.insert_user_test_wrapper(user)
 
     def test_insert_playlist(self):
         """
         Test that the 'insert_playlist' function can insert a playlist when no other playlist with the same id exists.
         """
 
-        # Insert a user into the database.
+        with app.app_context():
 
-        user = {'id': 'johndoe', 'display_name': 'johndoe'}
+            # Insert a user into the database.
 
-        returned_user = self.insert_user_test_wrapper(user)
+            user = {'id': 'johndoe', 'display_name': 'johndoe'}
 
-        # Insert a playlist into the database
+            returned_user = self.insert_user_test_wrapper(user)
 
-        playlist = {'id': 'johndoesplaylist', 'uri': 'johndoesplaylisturi', 'href': 'johndoesplaylisthref'}
+            # Insert a playlist into the database
 
-        self.insert_playlist_test_wrapper(playlist, returned_user.id)
+            playlist = {'id': 'johndoesplaylist', 'uri': 'johndoesplaylisturi', 'href': 'johndoesplaylisthref'}
 
-        # Insert a playlist using non-existing user.
+            self.insert_playlist_test_wrapper(playlist, returned_user.id)
 
-        playlist_2 = {'id': 'johndoesplaylist2', 'uri': 'johndoesplaylisturi2', 'href': 'johndoesplaylisthref2'}
+            # Insert a playlist using non-existing user.
 
-        self.insert_playlist_test_wrapper(playlist_2, 'janedoe', valid_user=False)
+            playlist_2 = {'id': 'johndoesplaylist2', 'uri': 'johndoesplaylisturi2', 'href': 'johndoesplaylisthref2'}
+
+            self.insert_playlist_test_wrapper(playlist_2, 'janedoe', valid_user=False)
 
     def insert_user_test_wrapper(self, user):
 
-        db_handler = DBHandler(db)
+        db_handler = DBHandler()
 
         # Insert a user into the database.
 
@@ -80,7 +84,7 @@ class DBHandlerTestCase(unittest.TestCase):
 
     def insert_playlist_test_wrapper(self, playlist, user_id, valid_user=True):
 
-        db_handler = DBHandler(db)
+        db_handler = DBHandler()
 
         # Insert a playlist into the database
 
