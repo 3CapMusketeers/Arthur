@@ -1,22 +1,52 @@
+import os
 import unittest
-import requests
-from SpotifyAPI import SpotifyAPI
-from handlers.SpotifyAPIHandler import SpotifyAPIHandler
+from sqlalchemy import create_engine
+from handlers.DBHandler import DBHandler
+from app import db
 
 
-class SpotifyAPIHandlerTestCase(unittest.TestCase):
+class DBHandlerTestCase(unittest.TestCase):
 
-    spotify_api = SpotifyAPI()
+    @classmethod
+    def setUpClass(cls):
+        """
+        Reset the database.
+        """
 
-    def setUp(self):
+        engine = create_engine(os.environ.get('DATABASE_URI'))
 
-        response = requests.get(self.spotify_api.request_authorization_to_access_data_url())
+        db.metadata.drop_all(bind=engine)
 
-        print(response)
+        db.metadata.create_all(bind=engine)
 
-    def test_authentication(self):
+    def test_insert_user(self):
+        """
+        Test that the 'insert_user' function can insert a user when no other user with the same id exists.
+        """
 
-        spotify_api_handler = SpotifyAPIHandler()
+        db_handler = DBHandler(db)
+
+        # Insert a user into the database.
+
+        user = {'id': 'johndoe', 'display_name': 'johndoe'}
+
+        was_inserted = db_handler.insert_user(user)
+
+        returned_user = db_handler.get_user(user['id'])
+
+        # Assert that the user was inserted.
+
+        self.assertTrue(was_inserted)
+
+        self.assertEqual(returned_user.id, user['id'])
+
+        # Insert the same user (same id) again.
+
+        was_inserted = db_handler.insert_user(user)
+
+        # Assert that the user was not inserted.
+
+        self.assertFalse(was_inserted)
 
 
 if __name__ == '__main__':

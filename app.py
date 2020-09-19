@@ -1,9 +1,21 @@
 import os
 from flask import Flask, redirect, request
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from SpotifyAPI import SpotifyAPI
 from handlers.SpotifyAPIHandler import SpotifyAPIHandler
 
 app = Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
+
+db = SQLAlchemy(app)
+
+migrate = Migrate(app, db)
+
+from handlers import DBHandler as dh
+
+from models import *
 
 spotify_api = SpotifyAPI()
 
@@ -11,11 +23,25 @@ spotify_api = SpotifyAPI()
 @app.route('/')
 def hello_world():
 
-    if spotify_api.access_token is None and spotify_api.refresh_token is None:
+    # Verify user is authenticated. Otherwise authenticate.
+
+    if not spotify_api.is_authenticated():
 
         return redirect('/authorization')
 
-    return {'hello': 'world'}
+    # Get user profile and insert into db if not already.
+
+    user = spotify_api.get_user_profile()
+
+    if 'error' in user:
+
+        return user
+
+    db_handler = dh.DBHandler(db)
+
+    db_handler.insert_user(user)
+
+    return {'user': user['display_name']}
 
 
 @app.route('/authorization', methods=['GET'])
