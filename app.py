@@ -2,6 +2,7 @@ import os
 from flask import Flask, redirect, request
 from flask_migrate import Migrate
 from flask_admin import Admin
+from flask_basicauth import BasicAuth
 from models import *
 from views.admin import *
 from shared import *
@@ -16,6 +17,8 @@ app.secret_key = os.environ.get('APP_SECRET_KEY')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
 
+login_manager.init_app(app)
+
 # db init
 
 db.init_app(app)
@@ -29,6 +32,8 @@ admin = Admin(app, name='Camelot Admin', template_mode='bootstrap3', index_view=
 admin.add_view(UserView(User, db.session))
 
 admin.add_view(PlaylistView(Playlist, db.session))
+
+admin.add_view(AdminUserView(AdminUser, db.session))
 
 
 @app.route('/')

@@ -55,6 +55,10 @@ class DBHandler:
 
         return models.User.query.get(id)
 
+    def get_admin_user(self, user_id):
+
+        return models.AdminUser.query.filter_by(user_id=user_id).first()
+
     def get_user_playlists(self, user_id):
         """
         Returns all the playlist that belongs to the user with specified user_id.
@@ -123,6 +127,35 @@ class DBHandler:
         if user and 'id' in user and 'display_name' in user and not self.get_user(user['id']):
 
             db.session.add(models.User(user['id'], user['display_name']))
+
+            try:
+
+                db.session.commit()
+
+                was_inserted = True
+
+            except exc.SQLAlchemyError:
+
+                db.session.rollback()
+
+            db.session.close()
+
+        return was_inserted
+
+    def insert_admin_user(self, admin_user):
+        """
+        Inserts an admin user into the database.
+        :param user: Dict
+            The admin user dict. See AdminUser model.
+        :return: Bool
+            True if the admin user was inserted into the database.
+        """
+
+        was_inserted = False
+
+        if 'user_id' in admin_user and 'password' in admin_user and not self.get_admin_user(admin_user['user_id']):
+
+            db.session.add(models.AdminUser(admin_user['user_id'], admin_user['password']))
 
             try:
 
