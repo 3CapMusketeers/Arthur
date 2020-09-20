@@ -2,7 +2,6 @@ import os
 from flask import Flask, redirect, request
 from flask_migrate import Migrate
 from flask_admin import Admin
-from flask_basicauth import BasicAuth
 from models import *
 from views.admin import *
 from shared import *
