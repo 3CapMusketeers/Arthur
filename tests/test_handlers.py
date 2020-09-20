@@ -63,7 +63,6 @@ class DBHandlerTestCase(unittest.TestCase):
 
             self.assertTrue(not Playlist.query.all())
 
-
     def test_delete_user(self):
         """
         Test that the 'delete_user' function can delete a user and all of its playlists.
@@ -106,7 +105,6 @@ class DBHandlerTestCase(unittest.TestCase):
 
             self.assertTrue(not Playlist.query.all())
 
-
     def test_insert_user(self):
         """
         Test that the 'insert_user' function can insert a user when no other user with the same id exists.
@@ -117,7 +115,6 @@ class DBHandlerTestCase(unittest.TestCase):
             user = {'id': 'johndoe', 'display_name': 'johndoe'}
 
             self.insert_user_test_wrapper(user)
-
 
     def test_insert_playlist(self):
         """
