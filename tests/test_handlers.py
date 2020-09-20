@@ -29,7 +29,7 @@ class DBHandlerTestCase(unittest.TestCase):
 
             # Assert that there are no playlists in the db
 
-            self.assertTrue(not Playlist.query.all())
+            self.assertFalse(Playlist.query.all())
 
             # Create a user with three playlists
 
@@ -69,7 +69,9 @@ class DBHandlerTestCase(unittest.TestCase):
         """
         with app.app_context():
 
-            self.assertTrue(not Playlist.query.all())
+            # Assert that there are no current playlists in the db
+
+            self.assertFalse(Playlist.query.all())
 
             user_id = 'johndoe'
 
@@ -115,6 +117,43 @@ class DBHandlerTestCase(unittest.TestCase):
             user = {'id': 'johndoe', 'display_name': 'johndoe'}
 
             self.insert_user_test_wrapper(user)
+
+    def test_insert_admin_user(self):
+        """
+        Test that the 'insert_admin_user' function can insert a new admin user when the parent user exists.
+        """
+
+        with app.app_context():
+
+            # Assert that there are no admin users in the db
+
+            self.assertFalse(AdminUser.query.all())
+
+            # Try to create a new admin user
+
+            admin_user = {'user_id': 'johndoe', 'password': 'not-password'}
+
+            db_handler = DBHandler()
+
+            # Assert that the admin user is not created since user with 'johndoe' does not exist
+
+            self.assertFalse(db_handler.insert_admin_user(admin_user))
+
+            # Create a new user
+
+            self.create_user(id=admin_user['user_id'])
+
+            # Assert that the admin user is created
+
+            self.assertTrue(db_handler.insert_admin_user(admin_user))
+
+            admin_user = db_handler.get_admin_user(admin_user['user_id'])
+
+            self.assertTrue(admin_user)
+
+            self.assertEqual(admin_user.user_id, 'johndoe')
+
+            self.assertEqual(len(AdminUser.query.all()), 1)
 
     def test_insert_playlist(self):
         """
