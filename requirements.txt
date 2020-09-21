@@ -5,3 +5,4 @@ Flask-Login
 Flask-SQLAlchemy
 Flask-Migrate
 psycopg2-binary
+requests
