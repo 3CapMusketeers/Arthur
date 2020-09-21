@@ -7,6 +7,7 @@ from views.admin import *
 from shared import *
 from handlers.DBHandler import *
 from handlers.SpotifyAPIHandler import SpotifyAPIHandler
+from MerlinAPI import MerlinAPI
 
 # app configs
 
@@ -90,9 +91,17 @@ def authentication():
 
     if spotify_api_handler.authenticate(request.args):
 
-        # If the user was authenticated, return to home page.
+        # If the user was authenticated, tell Merlin to create personal model
 
-        return redirect('/')
+        merlin_api = MerlinAPI()
+
+        result = merlin_api.create_model()
+
+        if 'msg' in result and result['msg'] == 'ok':
+
+            # Personal model created. Return to home page
+
+            return redirect('/')
 
     # The user was not authenticated.
 
@@ -103,4 +112,4 @@ if __name__ == '__main__':
     if os.environ.get('IS_PROD'):
         app.run()
     else:
-        app.run(debug=True, use_debugger=True)
+        app.run(debug=True, use_debugger=True, port=5000)
