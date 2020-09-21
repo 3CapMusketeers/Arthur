@@ -80,7 +80,19 @@ class SpotifyAPI:
 
         header = {'Authorization': 'Bearer ' + self.access_token if self.access_token is not None else ''}
 
-        params = {'q': search_term.replace(' ', 'x').replace('\'', ''), 'type': 'playlist'}
+        params = {'q': search_term.replace(' ', '+').replace('\'', ''), 'type': 'playlist'}
+
+        request = requests.get(url, headers=header, params=params).json()
+
+        return request
+
+    def search_tracks(self, search_term):
+
+        url = self.BASE_URL + '/search'
+
+        header = {'Authorization': 'Bearer ' + self.access_token if self.access_token is not None else ''}
+
+        params = {'q': search_term.replace(' ', '+').replace('\'', ''), 'type': 'track'}
 
         request = requests.get(url, headers=header, params=params).json()
 
