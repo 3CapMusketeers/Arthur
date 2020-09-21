@@ -1,3 +1,4 @@
+from shared import spotify_api
 from SpotifyAPI import SpotifyAPI
 
 
@@ -12,8 +13,6 @@ class SpotifyAPIHandler:
         :return: Bool
             True if the user was authenticated. False if otherwise (most likely the user did not authorized this app).
         """
-
-        spotify_api = SpotifyAPI.get_instance()
 
         # Get and set access and refresh tokens.
 

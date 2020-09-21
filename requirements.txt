@@ -1,4 +1,8 @@
 flask
+flask-wtf
+flask-admin
+Flask-Login
 Flask-SQLAlchemy
 Flask-Migrate
 psycopg2-binary
+requests

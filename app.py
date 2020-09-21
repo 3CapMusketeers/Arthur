@@ -1,23 +1,38 @@
 import os
 from flask import Flask, redirect, request
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from SpotifyAPI import SpotifyAPI
+from flask_admin import Admin
+from models import *
+from views.admin import *
+from shared import *
+from handlers.DBHandler import *
 from handlers.SpotifyAPIHandler import SpotifyAPIHandler
+
+# app configs
 
 app = Flask(__name__)
 
+app.secret_key = os.environ.get('APP_SECRET_KEY')
+
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
 
-db = SQLAlchemy(app)
+login_manager.init_app(app)
+
+# db init
+
+db.init_app(app)
 
 migrate = Migrate(app, db)
 
-from handlers import DBHandler as dh
+# Admin page
 
-from models import *
+admin = Admin(app, name='Camelot Admin', template_mode='bootstrap3', index_view=AdminHomeView())
 
-spotify_api = SpotifyAPI()
+admin.add_view(UserView(User, db.session))
+
+admin.add_view(PlaylistView(Playlist, db.session))
+
+admin.add_view(AdminUserView(AdminUser, db.session))
 
 
 @app.route('/')
@@ -37,7 +52,7 @@ def home():
 
         return user
 
-    db_handler = dh.DBHandler(db)
+    db_handler = DBHandler()
 
     db_handler.insert_user(user)
 
