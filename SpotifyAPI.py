@@ -74,17 +74,21 @@ class SpotifyAPI:
 
         return saved_tracks
 
-    def search_playlist(self, search_term):
+    def search_playlist(self, search_term, limit=1):
 
         url = self.BASE_URL + '/search'
 
         header = {'Authorization': 'Bearer ' + self.access_token if self.access_token is not None else ''}
 
-        params = {'q': search_term.replace(' ', '+').replace('\'', ''), 'type': 'playlist'}
+        params = {'q': search_term.replace(' ', '+').replace('\'', ''), 'type': 'playlist', 'limit': limit}
 
         request = requests.get(url, headers=header, params=params).json()
 
-        return request
+        if 'playlists' in request and 'items' in request['playlists']:
+
+            return request['playlists']['items']
+
+        return None
 
     def search_tracks(self, search_term):
 
@@ -96,7 +100,11 @@ class SpotifyAPI:
 
         request = requests.get(url, headers=header, params=params).json()
 
-        return request
+        if 'tracks' in request and 'items' in request['tracks']:
+
+            return request['tracks']['items']
+
+        return None
 
     def get_tracks_from_playlist(self, playlist_id):
 
@@ -104,7 +112,9 @@ class SpotifyAPI:
 
         header = {'Authorization': 'Bearer ' + self.access_token}
 
-        request = requests.get(url, headers=header).json()
+        params = {'limit': '50'}
+
+        request = requests.get(url, headers=header, params=params).json()
 
         tracks = []
 

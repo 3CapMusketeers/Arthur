@@ -51,6 +51,48 @@ class MerlinAPI:
 
         return request
 
+    def classify_tracks(self, search_term):
+
+        url = self.BASE_URL + '/classifier'
+
+        user = spotify_api.get_user_profile()
+
+        tracks = spotify_api.get_user_saved_tracks()
+
+        classify_tracks = []
+
+        for track in tracks:
+
+            if 'track' in track and 'preview_url' in track['track'] and track['track']['preview_url'] is not None:
+
+                classify_tracks.append({'id': track['track']['id'], 'url': track['track']['preview_url']})
+
+        playlists = spotify_api.search_playlist(search_term)
+
+        tracks = []
+
+        for playlist in playlists:
+
+            tracks += spotify_api.get_tracks_from_playlist(playlist['id'])
+
+        training_tracks = []
+
+        for track in tracks:
+
+            if 'preview_url' in track and track['preview_url'] is not None:
+
+                training_tracks.append({'id': track['id'], 'url': track['preview_url']})
+
+        json = {'uid': user['id'], 'search_term': search_term,'training_tracks': training_tracks, 'classify_tracks': classify_tracks}
+
+        request = requests.post(url, json=json).json()
+
+        if 'tracks' in request:
+
+            return request['tracks']
+
+        return None
+
     @staticmethod
     def get_instance():
 
