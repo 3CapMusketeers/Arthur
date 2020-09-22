@@ -46,6 +46,88 @@ class SpotifyAPI:
 
         return request
 
+    def get_user_saved_tracks(self):
+
+        url = self.BASE_URL + '/me/tracks'
+
+        header = {'Authorization': 'Bearer ' + self.access_token if self.access_token is not None else ''}
+
+        params = {'limit': '50'}
+
+        saved_tracks = []
+
+        while True:
+
+            request = requests.get(url, headers=header, params=params).json()
+
+            if 'items' in request:
+
+                saved_tracks += request['items']
+
+                if 'next' in request and request['next'] is not None:
+
+                    url = request['next']
+
+                else:
+
+                    break
+
+        return saved_tracks
+
+    def search_playlist(self, search_term, limit=1):
+
+        url = self.BASE_URL + '/search'
+
+        header = {'Authorization': 'Bearer ' + self.access_token if self.access_token is not None else ''}
+
+        params = {'q': search_term.replace(' ', '+').replace('\'', ''), 'type': 'playlist', 'limit': limit}
+
+        request = requests.get(url, headers=header, params=params).json()
+
+        if 'playlists' in request and 'items' in request['playlists']:
+
+            return request['playlists']['items']
+
+        return None
+
+    def search_tracks(self, search_term):
+
+        url = self.BASE_URL + '/search'
+
+        header = {'Authorization': 'Bearer ' + self.access_token if self.access_token is not None else ''}
+
+        params = {'q': search_term.replace(' ', '+').replace('\'', ''), 'type': 'track'}
+
+        request = requests.get(url, headers=header, params=params).json()
+
+        if 'tracks' in request and 'items' in request['tracks']:
+
+            return request['tracks']['items']
+
+        return None
+
+    def get_tracks_from_playlist(self, playlist_id):
+
+        url = self.BASE_URL + '/playlists/' + playlist_id + '/tracks'
+
+        header = {'Authorization': 'Bearer ' + self.access_token}
+
+        params = {'limit': '50'}
+
+        request = requests.get(url, headers=header, params=params).json()
+
+        tracks = []
+
+        if 'items' in request:
+
+            for item in request['items']:
+
+                if 'track' in item and item['track'] is not None:
+
+                    tracks.append(item['track'])
+
+        return tracks
+
     def request_authorization_to_access_data_url(self):
         """
         Returns a Spotify URL for the user to authorize access to 'user-read-private' and 'user-library-read'.
@@ -117,7 +199,19 @@ class SpotifyAPI:
 
     def is_authenticated(self):
 
-        return self.access_token and self.refresh_token
+        if self.access_token and self.refresh_token:
+
+            user = self.get_user_profile()
+
+            if 'error' in user and 'message' in user['error'] and user['error']['message'] == 'The access token expired':
+
+                return False
+
+            else:
+
+                return True
+
+        return False
 
     @staticmethod
     def get_instance():
