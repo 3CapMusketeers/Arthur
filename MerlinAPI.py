@@ -89,6 +89,27 @@ class MerlinAPI:
 
         return request['tracks'] if 'tracks' in request else None
 
+    def curated_playlist(self):
+
+        user = spotify_api.get_user_profile()
+
+        url = self.BASE_URL + '/personal-models/' + user['id'] + '/classification'
+
+        tracks = spotify_api.get_user_saved_tracks()
+
+        classify_tracks = []
+
+        for track in tracks:
+
+            if 'track' in track and 'preview_url' in track['track'] and track['track']['preview_url'] is not None:
+
+                classify_tracks.append({'id': track['track']['id'], 'url': track['track']['preview_url']})
+
+        json = {'classify_tracks': classify_tracks}
+
+        request = requests.post(url, json=json).json()
+
+        return request['tracks'] if 'tracks' in request else None
 
     @staticmethod
     def get_instance():

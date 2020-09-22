@@ -16,3 +16,9 @@ class MerlinAPIHandler:
         merlin_api = MerlinAPI()
 
         return merlin_api.classify_tracks(search_term)
+
+    def curated_playlist(self):
+
+        merlin_api = MerlinAPI()
+
+        return merlin_api.curated_playlist()
