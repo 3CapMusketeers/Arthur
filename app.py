@@ -7,7 +7,7 @@ from views.admin import *
 from shared import *
 from handlers.DBHandler import *
 from handlers.SpotifyAPIHandler import SpotifyAPIHandler
-from MerlinAPI import MerlinAPI
+from handlers.MerlinAPIHandler import MerlinAPIHandler
 
 # app configs
 
@@ -93,11 +93,9 @@ def authentication():
 
         # If the user was authenticated, tell Merlin to create personal model
 
-        merlin_api = MerlinAPI()
+        merlin_api_handler = MerlinAPIHandler()
 
-        result = merlin_api.create_model()
-
-        if 'msg' in result and result['msg'] == 'ok':
+        if merlin_api_handler.create_model():
 
             # Personal model created. Return to home page
 

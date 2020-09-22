@@ -199,7 +199,19 @@ class SpotifyAPI:
 
     def is_authenticated(self):
 
-        return self.access_token and self.refresh_token
+        if self.access_token and self.refresh_token:
+
+            user = self.get_user_profile()
+
+            if 'error' in user and 'message' in user['error'] and user['error']['message'] == 'The access token expired':
+
+                return False
+
+            else:
+
+                return True
+
+        return False
 
     @staticmethod
     def get_instance():

@@ -67,7 +67,7 @@ class MerlinAPI:
 
                 classify_tracks.append({'id': track['track']['id'], 'url': track['track']['preview_url']})
 
-        playlists = spotify_api.search_playlist(search_term)
+        playlists = spotify_api.search_playlist(search_term, limit=5)
 
         tracks = []
 
@@ -87,11 +87,8 @@ class MerlinAPI:
 
         request = requests.post(url, json=json).json()
 
-        if 'tracks' in request:
+        return request['tracks'] if 'tracks' in request else None
 
-            return request['tracks']
-
-        return None
 
     @staticmethod
     def get_instance():
