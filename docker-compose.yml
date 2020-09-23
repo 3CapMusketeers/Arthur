@@ -9,9 +9,18 @@ services:
       - 5000:5000
     environment:
       - FLASK_ENV=development
-      - APP_SETTINGS=project.config.DevelopmentConfig
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+
+      # Constant
+      - BASE_URL=https://api.spotify.com
+      - AUTH_URL=https://accounts.spotify.com/authorize
+      - API_TOKEN_URL=https://accounts.spotify.com/api/token
+
+      # Your settings go here
+      - REDIRECT_URI=http://localhost:5000/authentication
+      - CLIENT_ID=
+      - CLIENT_SECRET=
     depends_on:
       - postgres
 

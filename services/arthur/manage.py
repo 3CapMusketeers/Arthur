@@ -1,8 +1,7 @@
 from flask.cli import FlaskGroup
 
-from project import create_app, db
-from project.app.models import User, Playlist, AdminUser
-
+from project import create_app
+from project.app.handlers.DBHandler import db
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)

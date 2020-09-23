@@ -1,6 +1,6 @@
-from project import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from project.app.handlers.DBHandler import db
 
 class User(db.Model):
     id = db.Column(db.String(), primary_key=True)

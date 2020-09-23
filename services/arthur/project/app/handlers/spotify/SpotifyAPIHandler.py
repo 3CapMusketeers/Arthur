@@ -1,4 +1,6 @@
-from project import spotify_api
+from project.app.handlers.spotify.SpotifyAPI import SpotifyAPI
+
+spotify_api = SpotifyAPI()
 
 class SpotifyAPIHandler:
 
