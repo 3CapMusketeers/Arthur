@@ -1,0 +1,35 @@
+version: '3.7'
+
+services:
+  arthur:
+    build:
+      context: services/arthur
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    environment:
+      - FLASK_ENV=development
+      - APP_SETTINGS=project.config.DevelopmentConfig
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - postgres
+
+  postgres:
+    build:
+      context: ./services/db
+      dockerfile: Dockerfile
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  lancelot:
+    build:
+      context: ./services/lancelot
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - arthur
