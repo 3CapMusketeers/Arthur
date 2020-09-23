@@ -1,0 +1,162 @@
+@import 'variables.scss';
+@import '../../node_modules/bootstrap/scss/bootstrap.scss';
+@import '../../node_modules/bootstrap-vue/src/index.scss';
+/* GLOBAL STYLES
+-------------------------------------------------- */
+/* Padding below the footer and lighter body text */
+
+body {
+  background: $background;
+}
+
+.container {
+  max-width: 960px;
+}
+
+.body-container {
+  color: $mainText;
+  margin-top: 3.5em
+}
+.btn-primary {
+  @include button-variant(#5C4614, $background, #503D11, $barBackground, #3a301c, #503D11);
+  color: #DEDEDE;
+}
+.onthis-card {
+  width: 125px;
+  height: 165px;
+  margin: auto;
+}
+.primary-text {
+  color: $mainText;
+}
+.secondary-text {
+  color: $secondaryText;
+}
+
+.small-label {
+}
+/*
+ * Custom translucent site header
+ */
+.video_buttons {
+  border-top: 3px solid rgba($barBackground, .95);
+  border-bottom: 3px solid rgba($barBackground, .95);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+
+.site-header {
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+
+footer {
+  background-color: rgba($barBackground, .95);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+
+.site-header a {
+  color: rgba($thirdText, 0.85);
+  transition: ease-in-out color .15s;
+}
+
+.site-header a:hover {
+  color: $mainText;
+  text-decoration: none;
+}
+
+.sidebarMenu {
+  background: $secondBackground;
+}
+
+.test {
+  background: red;
+}
+
+/*
+ * Extra utilities
+ */
+
+.flex-equal > * {
+  -ms-flex: 1;
+  flex: 1;
+}
+
+@media (min-width: 768px) {
+  .flex-md-equal > * {
+    -ms-flex: 1;
+    flex: 1;
+  }
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+#app {
+  //  font-family: Avenir, Helvetica, Arial, sans-serif;
+  //  -webkit-font-smoothing: antialiased;
+  //  -moz-osx-font-smoothing: grayscale;
+  //  text-align: center;
+  color: $mainText;
+}
+
+.header-search input[type=text]:focus:not([readonly]) {
+  border: 1px solid $mainText;
+  box-shadow: 0 0 0 1px $mainText;
+}
+
+.header-search input[type=text] {
+  background-color: rgba(0, 0, 0, 0) !important;
+  border: 1px solid $thirdText;
+  box-shadow: 0 0 0 1px $thirdText;
+}
+
+.header-search-icon {
+  background-color: rgba($thirdText, 0.2) !important;
+  border: 1px solid $thirdText;
+  box-shadow: 0 0 0 1px $thirdText;
+  color: $thirdText;
+}
+//Comment
+
+.main-comment-with-reply {
+  // background: $secondBackground;  
+  // border-radius: 3%; 
+  border-top: 1px solid $secondBackground;
+  border-right: 1px solid $secondBackground;
+  border-bottom: 1px solid $secondBackground;
+  border-left: 2px solid $thirdText;
+}
+
+.reply-comment {
+  // background: $secondBackground;  
+  border-top: 1px solid $secondBackground;
+  border-bottom: 1px solid $secondBackground;
+
+  // border-radius: 0%; 
+
+}
+
+.simplebar-scrollbar::before {
+  background-color: rgba($mainText, .65);
+}
+
+.inner-reply {
+  // box-shadow: inset 0px 6px 8px 0px $background;
+  border-left: 2px solid $thirdText;
+}
+
+.comment-bottom-row {
+
+  border-top: 1px groove rgba($background, 0.6) !important;
+}
+
+//.footer {
+//  //margin-top: -130px;
+//  height: 150px;
+//  //clear: both;
+//  padding-top: 10px;
+//}
+
