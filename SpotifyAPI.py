@@ -1,4 +1,5 @@
 import os
+import math
 import json
 import requests
 import urllib
@@ -47,7 +48,7 @@ class SpotifyAPI:
 
         return request
 
-    def get_user_saved_tracks(self):
+    def get_user_saved_tracks(self, limit=None):
 
         url = self.BASE_URL + '/me/tracks'
 
@@ -72,6 +73,52 @@ class SpotifyAPI:
                 else:
 
                     break
+
+        # List the ids of the saved tracks
+
+        ids = []
+
+        if limit and limit < len(saved_tracks):
+
+            for track in saved_tracks:
+
+                if 'track' in track:
+
+                    ids.append(track['track']['id'])
+
+            # Get the audio features of each track
+
+            audio_features = self.get_audio_features(ids)
+
+            # For each feature, make an ordered list and select 'limit + 1' from the list.
+
+            ids = []
+
+            for feature in ['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness',
+                            'instrumentalness', 'liveness', 'valence', 'tempo']:
+
+                feature_sorted = sorted(audio_features, key=lambda features: features[feature])
+
+                step = math.floor(len(feature_sorted)/limit)
+
+                curr_index = 0
+
+                for i in range(0, limit + 1):
+
+                    curr_index = len(feature_sorted) - 1 if curr_index >= len(feature_sorted) else curr_index
+
+                    ids.append(feature_sorted[curr_index]['id'])
+
+                    curr_index += step
+
+            # Remove duplicate ids
+
+            ids = list(dict.fromkeys(ids))
+
+            selected_saved_tracks = [track for track in saved_tracks if 'track' in track and track['track']['id'] in
+                                     ids]
+
+            return selected_saved_tracks
 
         return saved_tracks
 
@@ -128,6 +175,37 @@ class SpotifyAPI:
                     tracks.append(item['track'])
 
         return tracks
+
+    def get_audio_features(self, ids):
+
+        url = self.BASE_URL + '/audio-features'
+
+        header = {'Authorization': 'Bearer ' + self.access_token}
+
+        audio_features = []
+
+        chunk = []
+
+        # The maximum number of allowed ids per request is 100, according to Spotify API. If ids is larger than 100,
+        # then break it down into chunks.
+
+        for i in range(0, len(ids)):
+
+            if i > 0 and i % 100 == 0 or i == len(ids) - 1:
+
+                params = {'ids': ','.join(chunk)}
+
+                response = requests.get(url, headers=header, params=params).json()
+
+                if 'audio_features' in response:
+
+                    audio_features += response['audio_features']
+
+                chunk = []
+
+            chunk.append(ids[i])
+
+        return audio_features
 
     def request_authorization_to_access_data_url(self):
         """
