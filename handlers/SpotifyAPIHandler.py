@@ -1,5 +1,6 @@
 from shared import spotify_api
 from SpotifyAPI import SpotifyAPI
+from handlers.DBHandler import *
 
 
 class SpotifyAPIHandler:
@@ -41,3 +42,29 @@ class SpotifyAPIHandler:
                 return True
 
         return False
+
+    def add_items_to_playlist(self, playlist_id, ids):
+
+        tracks = spotify_api.get_several_tracks(ids)
+
+        uris = []
+
+        for track in tracks:
+
+            uris.append(track['uri'])
+
+        return spotify_api.add_items_to_playlist(playlist_id, uris)
+
+    def create_playlist(self, name):
+
+        playlist = spotify_api.create_playlist(name)
+
+        if 'id' in playlist:
+
+            db_handler = DBHandler()
+
+            user = spotify_api.get_user_profile()
+
+            db_handler.insert_playlist(playlist, user['id'])
+
+        return playlist
