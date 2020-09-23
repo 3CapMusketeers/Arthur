@@ -1,0 +1,58 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+    <p>This is the Camelot Admin Page created using <a href="https://flask-admin.readthedocs.io/en/latest/introduction/#adding-your-own-views">Flask Admin</a>.</p>
+
+    <p>Authentication integrated using <a href="https://flask-login.readthedocs.io/en/latest/">Flask-Login</a>.
+
+    <br>
+
+    {% if current_user.is_authenticated %}
+
+        <br>
+
+        <a href={{ url_for('admin.logout') }}>Log out</a>
+
+    {% else %}
+
+        <h3>{{ form_header }}</h3>
+
+        <form method="POST" action="">
+
+        {% for field in form %}
+
+            {% if field.type != 'SubmitField' and field.type != 'CSRFTokenField'%}
+
+            {{ field.label }}
+
+            {% endif %}
+
+            <br>
+
+            {{ field }}
+
+            <br>
+
+            {% for error in field.errors %}
+
+                {{ error }}
+                <br>
+
+            {% endfor %}
+
+        {%  endfor %}
+
+        {% if form.hidden_tag %}
+
+            {{ form.hidden_tag() if form.hidden_tag }}
+
+        {% endif %}
+
+
+
+        </form>
+
+    {% endif %}
+
+
+{% endblock %}
