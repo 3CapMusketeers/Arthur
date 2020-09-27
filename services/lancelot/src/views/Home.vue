@@ -1,43 +1,61 @@
 <template>
   <div class="home">
-    <div>
-          <video-page></video-page>
+    <div class="row h-100 d-flex justify-content-center align-items-center">
+      <div class="col">
+        <h2 class="text-center">
+          Camelot
+        </h2>
+        <div class="row google-form text-center d-flex justify-content-center">
+          <form action="http://google.com/search" method="get" class="col-8">
+            <div class="form-group">
+              <input type="text" class="form-control google-search" name="q">
+              <div class="btn-group ">
+                <b-button variant="primary">Create Playlist</b-button>
+                <b-button variant="primary">Discover</b-button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 
 @Component({
   components: {}
 })
 export default class Home extends Vue {
-  options = {
-    normalScrollElements: '.video-sidebar',
-    dragAndMove: 'fingersonly'
-  };
 }
 </script>
 
 <style scoped lang="scss">
-//.video {
-//  margin: 0 auto;
-//  display: block;
-//}
+.home {
+  height: 60vh;
+}
+.google-logo {
+  padding: 20px 0;
+}
 
-/*.bd-placeholder-img {*/
-/*    font-size: 1.125rem;*/
-/*    text-anchor: middle;*/
-/*    -webkit-user-select: none;*/
-/*    -moz-user-select: none;*/
-/*    -ms-user-select: none;*/
-/*    user-select: none;*/
-/*}*/
+.google-search {
+  padding: 20px 10px;
+}
 
-/*@media (min-width: 768px) {*/
-/*    .bd-placeholder-img-lg {*/
-/*        font-size: 3.5rem;*/
-/*    }*/
-/*}*/
+.google-search:focus {
+  box-shadow: silver 0 2px 10px;
+  border-color: silver;
+}
+
+.google-form .btn-group {
+  padding: 20px 0;
+}
+
+.btn-group > .btn {
+  border-radius: 0;
+  margin: 0 10px;
+}
+
+
 </style>
