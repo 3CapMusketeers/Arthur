@@ -5,6 +5,7 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 
 # Project Imports
+from project.config import DevelopmentConfig
 from project.app.models import User, Playlist, AdminUser, db
 from project.app.handlers.DBHandler import *
 from project.app.handlers.spotify.SpotifyAPIHandler import SpotifyAPIHandler, spotify_api
@@ -20,8 +21,7 @@ def create_app(script_info=None):
     CORS(app)
 
     # set config
-    app_settings = os.getenv('APP_SETTINGS')
-    app.config.from_object(app_settings)
+    app.config.from_object(DevelopmentConfig)
 
     # set up extensions
     db.init_app(app)

@@ -13,8 +13,8 @@ class BaseConfig:
 class DevelopmentConfig(BaseConfig):
     """Development configuration"""
     DEBUG=True
-    SQLALCHEMY_DATABASE_URI = DATABASE_URL
-    FLASK_RUN_HOST="0.0.0.0"
+    # SQLALCHEMY_DATABASE_URI = DATABASE_URL
+    # FLASK_RUN_HOST="0.0.0.0"
 
 class ProductionConfig(BaseConfig):
     """Production configuration"""
