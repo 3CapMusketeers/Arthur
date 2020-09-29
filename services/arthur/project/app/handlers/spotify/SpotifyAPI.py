@@ -50,7 +50,7 @@ class SpotifyAPI:
         """
 
         return '%s?client_id=%s&response_type=code&redirect_uri=%s&scope=user-read-private,user-library-read' % \
-              (self.AUTH_URL, self.CLIENT_ID, self.REDIRECT_URI)
+              (self.AUTH_URL, self.CLIENT_ID, urllib.parse.quote_plus(self.REDIRECT_URI))
 
     def request_access_and_refresh_tokens(self, code):
         """
