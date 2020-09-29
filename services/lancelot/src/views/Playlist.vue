@@ -126,8 +126,9 @@
 
           </tbody>
         </table>
-
-
+      <div class="d-flex justify-content-center">
+        <b-button variant="primary"><b-icon icon="plus"></b-icon> Save Playlist</b-button>
+      </div>
       </div>
     </div>
   </div>
