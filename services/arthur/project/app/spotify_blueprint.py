@@ -21,7 +21,7 @@ def index():
 
     db_handler = DBHandler()
     db_handler.insert_user(user)
-
+    #
     return {'user': user['display_name']}
 
 @spotify_blueprint.route('/authorization', methods=['GET'])
@@ -31,7 +31,7 @@ def authorization():
     :return: String
         A url which points to the Spotify arthur authorization page.
     """
-    return redirect(url_for(spotify_api.request_authorization_to_access_data_url()))
+    return {'spotify_auth_url': spotify_api.request_authorization_to_access_data_url()}
 
 @spotify_blueprint.route('/authentication', methods=['GET'])
 def authentication():
@@ -42,7 +42,6 @@ def authentication():
     """
 
     # The user pressed 'Cancel' on the Spotify authorization page.
-
     if 'error' in request.args and request.args['error'] == 'access_denied':
         return {'error': 'The user did not authorized this arthur to access data.'}
 
@@ -53,7 +52,8 @@ def authentication():
     if spotify_api_handler.authenticate(request.args):
         # If the user was authenticated, return to home page.
 
-        return redirect(url_for('spotify_blueprint.home'))
+        # return {'auth': True}
+        return redirect(url_for('spotify_blueprint.index'))
 
     # The user was not authenticated.
 
