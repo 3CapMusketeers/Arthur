@@ -25,6 +25,57 @@ class SpotifyAPI:
 
         self.access_token = None
 
+    def add_items_to_playlist(self, playlist_id, uris):
+
+        url = self.BASE_URL + '/playlists/' + playlist_id + '/tracks'
+
+        header = {'Authorization': 'Bearer ' + self.access_token if self.access_token is not None else ''}
+
+        json = {'uris': uris}
+
+        return requests.post(url, headers=header, json=json).json()
+
+    def create_playlist(self, name):
+
+        user = self.get_user_profile()
+
+        url = self.BASE_URL + '/users/' + user['id'] + '/playlists'
+
+        header = {'Authorization': 'Bearer ' + self.access_token if self.access_token is not None else ''}
+
+        json = {'name': name, 'description': 'Created using Camelot.'}
+
+        return requests.post(url, headers=header, json=json).json()
+
+    def get_several_tracks(self, ids):
+
+        url = self.BASE_URL + '/tracks'
+
+        header = {'Authorization': 'Bearer ' + self.access_token}
+
+        # The maximum number of allowed ids per request is 50, according to Spotify API. If ids is larger than 50,
+        # then break it down into chunks.
+
+        tracks = []
+
+        chunk = []
+
+        for i in range(0, len(ids)):
+
+            if i > 0 and i % 50 == 0 or i == len(ids) - 1:
+
+                params = {'ids': ','.join(chunk)}
+
+                response = requests.get(url, headers=header, params=params).json()
+
+                tracks += response['tracks'] if 'tracks' in response else []
+
+                chunk = []
+
+            chunk.append(ids[i])
+
+        return tracks
+
     def get_user_profile(self):
 
         url = self.BASE_URL + '/me'
