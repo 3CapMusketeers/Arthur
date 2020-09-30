@@ -5,6 +5,9 @@ from flask import Blueprint, redirect, request, url_for
 from project.app.handlers import DBHandler
 from project.app.handlers.spotify.SpotifyAPI import SpotifyAPI
 from project.app.handlers.spotify.SpotifyAPIHandler import SpotifyAPIHandler
+from project.app.handlers import DBHandler
+from project.app.models import User
+from project import db
 
 spotify_blueprint = Blueprint('spotify_blueprint', __name__)
 
@@ -25,8 +28,8 @@ def index():
 
             return user
 
-        db_handler = DBHandler()
-        db_handler.insert_user(user)
+        # db_handler = DBHandler()
+        DBHandler().insert_user(user)
 
         return {'user': user['display_name']}
 

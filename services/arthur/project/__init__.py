@@ -8,7 +8,7 @@ from flask_migrate import Migrate
 from project.config import DevelopmentConfig
 from project.app.models import User, Playlist, AdminUser, db
 from project.app.handlers.DBHandler import *
-from project.app.handlers.spotify.SpotifyAPIHandler import SpotifyAPIHandler, spotify_api
+# from project.app.handlers.spotify.SpotifyAPIHandler import SpotifyAPIHandler, spotify_api
 
 # instantiate the extensions
 migrate = Migrate()
@@ -21,7 +21,8 @@ def create_app(script_info=None):
     CORS(app)
 
     # set config
-    app.config.from_object(DevelopmentConfig)
+    app_settings = os.getenv('APP_SETTINGS')
+    app.config.from_object(app_settings)
 
     # set up extensions
     db.init_app(app)

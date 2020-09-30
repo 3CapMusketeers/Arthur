@@ -1,6 +1,8 @@
 from sqlalchemy import exc
 from flask_sqlalchemy import SQLAlchemy
 
+from project.app import models
+
 db = SQLAlchemy()
 
 class DBHandler:

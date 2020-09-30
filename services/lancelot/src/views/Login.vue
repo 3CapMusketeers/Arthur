@@ -3,7 +3,7 @@
     <div class="row h-100 d-flex justify-content-center align-items-center">
       <form class="form-signin col-3 align-middle">
         <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-        Spotify Login Button
+        <b-button variant="primary" :href="url">Login with Spotify</b-button>
       </form>
     </div>
   </div>
@@ -11,11 +11,46 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
+import SpotifyDataService from "@/services/SpotifyDataService";
+import router from "@/router";
 
 @Component({
   components: {}
 })
 export default class Login extends Vue {
+  url: string;
+
+  constructor() {
+    super();
+    this.url = SpotifyDataService.getSpotifyURL();
+
+    const url = this.$route.hash.slice(1);
+    const parsed = this.parse_query_string(url);
+
+    if (parsed.has('access_token')) {
+      SpotifyDataService.storeToken(parsed.get("access_token"));
+      router.push('/');
+    }
+  }
+
+  parse_query_string(query: string) {
+    let vars = query.split("&");
+    let query_string = new Map();
+
+    for (var i = 0; i < vars.length; i++) {
+      var pair = vars[i].split("=");
+      var key = decodeURIComponent(pair[0]);
+      var value = decodeURIComponent(pair[1]);
+
+      const arr = decodeURIComponent(value);
+
+      query_string.set(key, arr);
+
+    }
+    return query_string;
+  }
+
+
 }
 </script>
 <style>
