@@ -21,15 +21,15 @@ def index():
         spotify_api.set_access_token(request.args['access_token'])
 
         # Get user profile and insert into db if not already.
-
         user = spotify_api.get_user_profile()
 
         if 'error' in user:
 
             return user
 
+        # TODO: FIX THIS
         # db_handler = DBHandler()
-        DBHandler().insert_user(user)
+        # DBHandler().insert_user(user)
 
         return {'user': user['display_name']}
 

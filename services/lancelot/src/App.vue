@@ -2,6 +2,15 @@
   <div id="app" type="dark">
     <b-navbar toggleable="lg" type="dark" variant="primary">
       <b-navbar-brand href="#">Camelot</b-navbar-brand>
+      <b-navbar-nav>
+        <span v-if="isLoggedIn" class="row">
+          <b-nav-item href="#">{{username}}</b-nav-item>
+          <b-nav-item href="#" @click="logout()">Logout</b-nav-item>
+        </span>
+        <span v-else class="row">
+          <b-nav-item href="/login">Login</b-nav-item>
+        </span>
+      </b-navbar-nav>
     </b-navbar>
     <router-view></router-view>
     <div class="col d-flex justify-content-center ">
@@ -15,11 +24,26 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import SpotifyDataService from "@/services/SpotifyDataService";
 
 @Component({
   components: {}
 })
-export default class Login extends Vue {}
+export default class Login extends Vue {
+  username: string = "";
+  isLoggedIn: boolean = false;
+
+  mounted() {
+    if(SpotifyDataService.getToken() != undefined) {
+      this.isLoggedIn = true;
+      this.username = SpotifyDataService.getUsername();
+    }
+  }
+  logout() {
+    this.isLoggedIn = false;
+    SpotifyDataService.logout();
+  }
+}
 </script>
 <style scoped type="scss">
 </style>

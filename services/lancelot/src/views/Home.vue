@@ -10,7 +10,7 @@
             <div class="form-group">
               <input type="text" class="form-control google-search" name="q">
               <div class="btn-group ">
-                <b-button variant="primary">Create Playlist</b-button>
+                <b-button variant="primary" @click="createPlaylist()">Create Playlist</b-button>
                 <b-button variant="primary" @click="getDiscover()">Discover</b-button>
               </div>
             </div>
@@ -23,17 +23,20 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import SpotifyDataService from "../services/SpotifyDataService";
 
 @Component({
   components: {}
 })
 export default class Home extends Vue {
-  getDiscover() {
-    SpotifyDataService.get().then(res => {
-      console.log(res);
-    });
+
+  createPlaylist() {
+    console.log('click Createplaylist')
   }
+
+  getDiscover() {
+    console.log('clicked get discover')
+  }
+
 
   // private tutorial: any = {
   //   id: null,

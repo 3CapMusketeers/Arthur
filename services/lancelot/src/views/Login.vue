@@ -28,7 +28,7 @@ export default class Login extends Vue {
     const parsed = this.parse_query_string(url);
 
     if (parsed.has('access_token')) {
-      SpotifyDataService.storeToken(parsed.get("access_token"));
+      SpotifyDataService.login(parsed.get("access_token"));
       router.push('/');
     }
   }
