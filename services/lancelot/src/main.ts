@@ -5,7 +5,7 @@ import App from "./App.vue";
 
 //Packages
 ///Bootstrap
-import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+import {BootstrapVue, BootstrapVueIcons} from 'bootstrap-vue'
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
@@ -19,7 +19,7 @@ import './assets/style.scss';
 // Vue.component('main-comment', Comment)
 
 new Vue({
-	store,
-	router: router,
-	render: h => h(App)
+  store,
+  router: router,
+  render: h => h(App)
 }).$mount('#app');

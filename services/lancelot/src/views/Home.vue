@@ -10,8 +10,8 @@
             <div class="form-group">
               <input type="text" class="form-control google-search" name="q">
               <div class="btn-group ">
-                <b-button variant="primary">Create Playlist</b-button>
-                <b-button variant="primary">Discover</b-button>
+                <b-button variant="primary" @click="createPlaylist()">Create Playlist</b-button>
+                <b-button variant="primary" @click="getDiscover()">Discover</b-button>
               </div>
             </div>
           </form>
@@ -28,6 +28,46 @@ import {Component, Vue} from "vue-property-decorator";
   components: {}
 })
 export default class Home extends Vue {
+
+  createPlaylist() {
+    console.log('click Createplaylist')
+  }
+
+  getDiscover() {
+    console.log('clicked get discover')
+  }
+
+
+  // private tutorial: any = {
+  //   id: null,
+  //   title: "",
+  //   description: "",
+  //   published: false,
+  // };
+  //
+  // private submitted: boolean = false;
+  //
+  // saveTutorial() {
+  //   var data = {
+  //     title: this.tutorial.title,
+  //     description: this.tutorial.description,
+  //   };
+  //
+  //   TutorialDataService.create(data)
+  //     .then((response) => {
+  //       this.tutorial.id = response.data.id;
+  //       console.log(response.data);
+  //       this.submitted = true;
+  //     })
+  //     .catch((e) => {
+  //       console.log(e);
+  //     });
+  // }
+  //
+  // newTutorial() {
+  //   this.submitted = false;
+  //   this.tutorial = {};
+  // }
 }
 </script>
 
@@ -35,6 +75,7 @@ export default class Home extends Vue {
 .home {
   height: 60vh;
 }
+
 .google-logo {
   padding: 20px 0;
 }

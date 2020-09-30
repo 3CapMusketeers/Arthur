@@ -1,6 +1,5 @@
 from project.app.handlers.spotify.SpotifyAPI import SpotifyAPI
 
-spotify_api = SpotifyAPI()
 
 class SpotifyAPIHandler:
 
@@ -14,25 +13,13 @@ class SpotifyAPIHandler:
             True if the user was authenticated. False if otherwise (most likely the user did not authorized this arthur).
         """
 
-        # Get and set access and refresh tokens.
+        spotify_api = SpotifyAPI()
 
-        if spotify_api.access_token is None and 'code' in args and args['code'] is not None:
+        # Get and set access token.
 
-            access_token, refresh_token = spotify_api.request_access_and_refresh_tokens(args['code'])
+        if 'code' in args and args['code'] is not None:
 
-            if access_token is not None and refresh_token is not None:
-
-                spotify_api.set_access_token(access_token)
-
-                spotify_api.set_refresh_token(refresh_token)
-
-                return True
-
-        # Refresh access token.
-
-        elif spotify_api.refresh_token is not None:
-
-            access_token = spotify_api.request_new_access_token(spotify_api.refresh_token)
+            access_token = spotify_api.request_access_and_refresh_tokens(args['code'])
 
             if access_token is not None:
 

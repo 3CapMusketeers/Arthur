@@ -3,26 +3,39 @@ from flask import Blueprint, redirect, request, url_for
 
 # Project imports
 from project.app.handlers import DBHandler
-from project.app.handlers.spotify.SpotifyAPIHandler import SpotifyAPIHandler, spotify_api
+from project.app.handlers.spotify.SpotifyAPI import SpotifyAPI
+from project.app.handlers.spotify.SpotifyAPIHandler import SpotifyAPIHandler
+from project.app.handlers import DBHandler
+from project.app.models import User
+from project import db
 
 spotify_blueprint = Blueprint('spotify_blueprint', __name__)
 
-@spotify_blueprint.route('/')
+@spotify_blueprint.route('/', methods=['GET'])
 def index():
-    # Verify user is authenticated. Otherwise authenticate.
-    if not spotify_api.is_authenticated():
-        return redirect(url_for('spotify_blueprint.authorization'))
 
-    # Get user profile and insert into db if not already.
-    user = spotify_api.get_user_profile()
+    if 'access_token' in request.args:
 
-    if 'error' in user:
-        return user
+        spotify_api = SpotifyAPI()
 
-    db_handler = DBHandler()
-    db_handler.insert_user(user)
-    #
-    return {'user': user['display_name']}
+        spotify_api.set_access_token(request.args['access_token'])
+
+        # Get user profile and insert into db if not already.
+        user = spotify_api.get_user_profile()
+
+        if 'error' in user:
+
+            return user
+
+        # TODO: FIX THIS
+        # db_handler = DBHandler()
+        # DBHandler().insert_user(user)
+
+        return {'user': user['display_name']}
+
+    else:
+
+        return {'arthur_auth_url': url_for('spotify_blueprint.authorization')}
 
 @spotify_blueprint.route('/authorization', methods=['GET'])
 def authorization():
@@ -31,30 +44,7 @@ def authorization():
     :return: String
         A url which points to the Spotify arthur authorization page.
     """
+
+    spotify_api = SpotifyAPI()
+
     return {'spotify_auth_url': spotify_api.request_authorization_to_access_data_url()}
-
-@spotify_blueprint.route('/authentication', methods=['GET'])
-def authentication():
-    """
-    Authentication refers to the user's access and refresh keys which are stored and used to send requests to the
-    Spotify Web API.
-    :return: Response object (if successful) that redirects the user to another location. Dict (if unsuccessful).
-    """
-
-    # The user pressed 'Cancel' on the Spotify authorization page.
-    if 'error' in request.args and request.args['error'] == 'access_denied':
-        return {'error': 'The user did not authorized this arthur to access data.'}
-
-    # Authenticate user
-
-    spotify_api_handler = SpotifyAPIHandler()
-
-    if spotify_api_handler.authenticate(request.args):
-        # If the user was authenticated, return to home page.
-
-        # return {'auth': True}
-        return redirect(url_for('spotify_blueprint.index'))
-
-    # The user was not authenticated.
-
-    return {'error': 'There was a problem authenticating the user.'}

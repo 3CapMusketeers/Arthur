@@ -23,15 +23,6 @@ const routes = [
     component: Playlist
   },
   {
-    path: "/dashboard",
-    name: "Dashboard",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-        import(/* webpackChunkName: "about" */ "../views/Dashboard.vue")
-  },
-  {
     path: "/about",
     name: "About",
     // route level code-splitting
@@ -43,7 +34,22 @@ const routes = [
 ];
 
 const router = new VueRouter({
-  routes
+  routes,
+  mode: 'history'
 });
 
 export default router;
+
+router.beforeEach((to, from, next) => {
+  const publicPages = ['/spotifyCallback', '/', '/login', ];
+  const authRequired = !publicPages.includes(to.path);
+  const loggedIn = localStorage.getItem('spotify_token');
+
+  // trying to access a restricted page + not logged in
+  // redirect to login page
+  if (authRequired && !loggedIn) {
+    next('/login');
+  } else {
+    next();
+  }
+});
