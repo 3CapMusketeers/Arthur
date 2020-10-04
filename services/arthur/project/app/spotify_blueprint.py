@@ -67,6 +67,6 @@ def recommended(access_token):
 
         spotify_handler = SpotifyAPIHandler()
 
-        return spotify_handler.saved_tracks(access_token, request.args['search_term'])
+        return spotify_handler.recommended(access_token, request.args['search_term'])
 
     return {'Error': 'Search term missing.'}
