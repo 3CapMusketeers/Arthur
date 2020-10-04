@@ -48,3 +48,25 @@ def authorization():
     spotify_api = SpotifyAPI()
 
     return {'spotify_auth_url': spotify_api.request_authorization_to_access_data_url()}
+
+@spotify_blueprint.route('/users/<access_token>/saved-tracks', methods=['POST'])
+def saved_tracks(access_token):
+
+    if 'search_term' in request.args:
+
+        spotify_handler = SpotifyAPIHandler()
+
+        return spotify_handler.saved_tracks(access_token, request.args['search_term'])
+
+    return {'Error': 'Search term missing.'}
+
+@spotify_blueprint.route('/users/<access_token>/recommended', methods=['POST'])
+def recommended(access_token):
+
+    if 'search_term' in request.args:
+
+        spotify_handler = SpotifyAPIHandler()
+
+        return spotify_handler.saved_tracks(access_token, request.args['search_term'])
+
+    return {'Error': 'Search term missing.'}

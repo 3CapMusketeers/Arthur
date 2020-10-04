@@ -3,22 +3,20 @@ from project.app.handlers.MerlinAPI import MerlinAPI
 
 class MerlinAPIHandler:
 
+    def __init__(self, spotify_api):
+
+        self.merlin_api = MerlinAPI(spotify_api)
+
     def create_model(self):
 
-        merlin_api = MerlinAPI()
-
-        result = merlin_api.create_model()
+        result = self.merlin_api.create_model()
 
         return 'msg' in result and result['msg'] == 'ok'
 
     def classify_tracks(self, search_term):
 
-        merlin_api = MerlinAPI()
+        return self.merlin_api.classify_tracks(search_term)
 
-        return merlin_api.classify_tracks(search_term)
+    def curated_playlist(self, search_term):
 
-    def curated_playlist(self):
-
-        merlin_api = MerlinAPI()
-
-        return merlin_api.curated_playlist()
+        return self.merlin_api.curated_playlist(search_term)

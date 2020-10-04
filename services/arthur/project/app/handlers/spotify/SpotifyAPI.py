@@ -21,9 +21,9 @@ class SpotifyAPI:
     CLIENT_ID = os.environ.get('CLIENT_ID')
     CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
 
-    def __init__(self):
+    def __init__(self, access_token):
 
-        self.access_token = None
+        self.access_token = access_token
 
     def add_items_to_playlist(self, playlist_id, uris):
 

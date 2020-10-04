@@ -76,7 +76,7 @@ class MerlinAPI:
 
         return request['tracks'] if 'tracks' in request else None
 
-    def curated_playlist(self):
+    def curated_playlist(self, search_term):
 
         user = self.spotify_api.get_user_profile()
 
