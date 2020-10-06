@@ -114,7 +114,7 @@ class SpotifyAPI:
 
         return saved_tracks
 
-    def search_playlist(self, search_term, limit=1):
+    def search_playlist(self, search_term, limit=5):
 
         url = self.BASE_URL + '/search'
 

@@ -82,7 +82,15 @@ class MerlinAPI:
 
         url = self.BASE_URL + '/personal-models/' + user['id'] + '/classification'
 
-        tracks = self.spotify_api.get_user_saved_tracks()
+        tracks = []
+
+        playlists = self.spotify_api.search_playlist(search_term)
+
+        for playlist in playlists:
+
+            if 'id' in playlist:
+
+                tracks += self.spotify_api.get_tracks_from_playlist(playlist['id'])
 
         classify_tracks = []
 
