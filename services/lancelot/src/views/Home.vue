@@ -6,15 +6,15 @@
           Camelot
         </h2>
         <div class="row google-form text-center d-flex justify-content-center">
-          <form action="http://google.com/search" method="get" class="col-8">
-            <div class="form-group">
-              <input type="text" class="form-control google-search" name="q">
+<!--          <form action="http://google.com/search" method="get" class="col-8">-->
+            <div class="form-group col-8">
+              <input v-model="searchTerm" class="form-control google-search" >
               <div class="btn-group ">
                 <b-button variant="primary" @click="createPlaylist()">Create Playlist</b-button>
                 <b-button variant="primary" @click="getDiscover()">Discover</b-button>
               </div>
             </div>
-          </form>
+<!--          </form>-->
         </div>
       </div>
     </div>
@@ -23,14 +23,16 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
+import SpotifyDataService from "@/services/SpotifyDataService";
 
 @Component({
   components: {}
 })
 export default class Home extends Vue {
+  searchTerm = "";
 
   createPlaylist() {
-    console.log('click Createplaylist')
+    SpotifyDataService.getRecommendation(this.searchTerm);
   }
 
   getDiscover() {

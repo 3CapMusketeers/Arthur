@@ -7,7 +7,7 @@ class SpotifyDataService {
     'user-read-private',
     'user-library-read'
   ];
-  redirectUri = "http://localhost:8080/login";
+  redirectUri = "http://localhost:8080/login"; //Use route for this to get current url
   authEndpoint = 'https://accounts.spotify.com/authorize';
 
   getSpotifyURL() {
@@ -18,6 +18,10 @@ class SpotifyDataService {
     let actualToken = localStorage.setItem('spotify_token', token);
     this.setUsername()
     return actualToken;
+  }
+
+  getRecommendation(term: string) {
+    http.post(`/users/${this.getToken()}/recommended?search_term=${term}`, {});
   }
 
   getUsername() {

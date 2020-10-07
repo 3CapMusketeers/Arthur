@@ -1,4 +1,4 @@
-from project.app.handlers.MerlinAPI import MerlinAPIHandler
+from project.app.handlers.MerlinAPIHandler import MerlinAPIHandler
 from project.app.handlers.spotify.SpotifyAPI import SpotifyAPI
 
 

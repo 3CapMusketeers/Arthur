@@ -4,11 +4,12 @@
       <b-navbar-brand href="#">Camelot</b-navbar-brand>
       <b-navbar-nav>
         <span v-if="isLoggedIn" class="row">
-          <b-nav-item href="#">{{username}}</b-nav-item>
+          <b-nav-item href="#">{{ username }}</b-nav-item>
           <b-nav-item href="#" @click="logout()">Logout</b-nav-item>
         </span>
         <span v-else class="row">
-          <b-nav-item href="/login">Login</b-nav-item>
+          <b-nav-item> <router-link to="{ name: 'Login' }"> Login</router-link></b-nav-item>
+
         </span>
       </b-navbar-nav>
     </b-navbar>
@@ -17,13 +18,16 @@
       <div>
         <h5 class="text-center pb-2">Created for:</h5>
         <img src="./assets/spotify.png" height="50" width="175"/>
-        <h6 class="text-center p-3">With <b-icon icon="heart-fill"></b-icon> in UPRM</h6>
+        <h6 class="text-center p-3">With
+          <b-icon icon="heart-fill"></b-icon>
+          in UPRM
+        </h6>
       </div>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 import SpotifyDataService from "@/services/SpotifyDataService";
 
 @Component({
@@ -34,11 +38,13 @@ export default class Login extends Vue {
   isLoggedIn: boolean = false;
 
   mounted() {
-    if(SpotifyDataService.getToken() != undefined) {
+    if (SpotifyDataService.getToken() != undefined) {
       this.isLoggedIn = true;
       this.username = SpotifyDataService.getUsername();
+      console.log(this.username);
     }
   }
+
   logout() {
     this.isLoggedIn = false;
     SpotifyDataService.logout();

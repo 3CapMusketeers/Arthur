@@ -10,7 +10,7 @@ class MerlinAPI:
 
     # Urls
 
-    BASE_URL = os.environ.get('MERLIN_BASE_URL')
+    MERLIN_BASE_URL = os.environ.get('MERLIN_BASE_URL')
 
     def __init__(self, spotify_api):
 
@@ -18,7 +18,7 @@ class MerlinAPI:
 
     def create_model(self):
 
-        url = self.BASE_URL + '/personal-models'
+        url = self.MERLIN_BASE_URL + '/personal-models'
 
         user = self.spotify_api.get_user_profile()
 
@@ -40,7 +40,7 @@ class MerlinAPI:
 
     def classify_tracks(self, search_term):
 
-        url = self.BASE_URL + '/classifier'
+        url = self.MERLIN_BASE_URL + '/classifier'
 
         user = self.spotify_api.get_user_profile()
 
@@ -80,7 +80,7 @@ class MerlinAPI:
 
         user = self.spotify_api.get_user_profile()
 
-        url = self.BASE_URL + '/personal-models/' + user['id'] + '/classification'
+        url = self.MERLIN_BASE_URL + '/personal-models/' + user['id'] + '/classification'
 
         tracks = []
 
