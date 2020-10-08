@@ -19,8 +19,8 @@ import router from "@/router";
 })
 export default class Login extends Vue {
   url: string;
-mounted() {
 
+  mounted() {
     const url = this.$route.hash.slice(1);
     const parsed = this.parse_query_string(url);
     if (parsed.has('access_token')) {

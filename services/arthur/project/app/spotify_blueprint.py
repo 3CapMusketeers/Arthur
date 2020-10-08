@@ -23,7 +23,7 @@ def index():
         # Get user profile and insert into db if not already.
         user = spotify_api.get_user_profile()
         if 'error' in user:
-            return user
+            return jsonify(error=True, msg=user['error'])
 
         # TODO: FIX THIS
         # db_handler = DBHandler()
@@ -44,12 +44,11 @@ def authorization():
     :return: String
         A url which points to the Spotify arthur authorization page.
     """
-
     spotify_api = SpotifyAPI()
 
     return {'spotify_auth_url': spotify_api.request_authorization_to_access_data_url()}
 
-@spotify_blueprint.route('/users/<access_token>/saved-tracks', methods=['POST'])
+@spotify_blueprint.route('/users/<access_token>/saved-tracks', methods=['POST']) # Weird name
 def saved_tracks(access_token):
 
     if 'search_term' in request.args:

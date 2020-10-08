@@ -41,15 +41,17 @@ export default class Login extends Vue {
   isLoggedIn: boolean = false;
 
   mounted() {
-    if (SpotifyDataService.getToken() != undefined) {
+    if (SpotifyDataService.isLoggedIn()) {
       this.isLoggedIn = true;
       this.username = SpotifyDataService.getUsername();
-      console.log(this.username);
+    } else {
+      this.isLoggedIn = false;
     }
+    this.isLoggedIn = SpotifyDataService.isLoggedIn();
   }
 
   logout() {
-    this.isLoggedIn = false;
+    // this.isLoggedIn = false;
     SpotifyDataService.logout();
   }
 }

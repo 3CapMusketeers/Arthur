@@ -9,6 +9,7 @@
             <b-button variant="primary mx-3">Discover</b-button>
           </div>
         </div>
+
         <table class="table">
           <thead>
           <tr>
@@ -19,116 +20,22 @@
           </tr>
           </thead>
           <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>Ultralight Beam</td>
-            <td>Kanye West</td>
+          <tr v-for="track in tracks" v-bind:key="track.id">
+            <th scope="row">{{track.id}}</th>
+            <td>{{track.song}}</td>
+            <td>{{track.artist}}</td>
             <td>
               <input type="checkbox" aria-label="Checkbox for following text input">
             </td>
           </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Ultralight Beam</td>
-            <td>Kanye West</td>
-            <td>
-              <input type="checkbox" aria-label="Checkbox for following text input">
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td>Ultralight Beam</td>
-            <td>Kanye West</td>
-            <td>
-              <input type="checkbox" aria-label="Checkbox for following text input">
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">4</th>
-            <td>Ultralight Beam</td>
-            <td>Kanye West</td>
-            <td>
-              <input type="checkbox" aria-label="Checkbox for following text input">
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">5</th>
-            <td>Ultralight Beam</td>
-            <td>Kanye West</td>
-            <td>
-              <input type="checkbox" aria-label="Checkbox for following text input">
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">6</th>
-            <td>Ultralight Beam</td>
-            <td>Kanye West</td>
-            <td>
-              <input type="checkbox" aria-label="Checkbox for following text input">
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">7</th>
-            <td>Ultralight Beam</td>
-            <td>Kanye West</td>
-            <td>
-              <input type="checkbox" aria-label="Checkbox for following text input">
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">8</th>
-            <td>Ultralight Beam</td>
-            <td>Kanye West</td>
-            <td>
-              <input type="checkbox" aria-label="Checkbox for following text input">
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">9</th>
-            <td>Ultralight Beam</td>
-            <td>Kanye West</td>
-            <td>
-              <input type="checkbox" aria-label="Checkbox for following text input">
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">10</th>
-            <td>Ultralight Beam</td>
-            <td>Kanye West</td>
-            <td>
-              <input type="checkbox" aria-label="Checkbox for following text input">
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">11</th>
-            <td>Ultralight Beam</td>
-            <td>Kanye West</td>
-            <td>
-              <input type="checkbox" aria-label="Checkbox for following text input">
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">12</th>
-            <td>Ultralight Beam</td>
-            <td>Kanye West</td>
-            <td>
-              <input type="checkbox" aria-label="Checkbox for following text input">
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">13</th>
-            <td>Ultralight Beam</td>
-            <td>Kanye West</td>
-            <td>
-              <input type="checkbox" aria-label="Checkbox for following text input">
-            </td>
-          </tr>
-
           </tbody>
         </table>
-      <div class="d-flex justify-content-center">
-        <b-button variant="primary"><b-icon icon="plus"></b-icon> Save Playlist</b-button>
-      </div>
+        <div class="d-flex justify-content-center">
+          <b-button variant="primary">
+            <b-icon icon="plus"></b-icon>
+            Save Playlist
+          </b-button>
+        </div>
       </div>
     </div>
   </div>
@@ -138,9 +45,13 @@
 import {Component, Vue} from "vue-property-decorator";
 
 @Component({
-  components: {}
+  components: {},
 })
 export default class Playlist extends Vue {
+  tracks = {};
+ mounted() {
+  this.tracks = this.$store.getters.tracks;
+ }
 }
 </script>
 

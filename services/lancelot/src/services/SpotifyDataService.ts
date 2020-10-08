@@ -16,22 +16,18 @@ class SpotifyDataService {
 
   login(token: string) {
     let actualToken = localStorage.setItem('spotify_token', token);
-    // this.setUsername()
-
     return actualToken;
   }
 
-  getRecommendation(term: string) {
-    http.post(`/users/${this.getToken()}/recommended?search_term=${term}`, {}).then(d => {
-      if(d.data.length==0) {
-        //empty
-        console.log(d.data)
-      }
-      console.log(d.data)
-    });
+  createPlaylist(term: string) {
+    return http.post(`/users/${this.getToken()}/saved-tracks?search_term=${term}`, {})
   }
 
-  getUsername() {
+  isLoggedIn() {
+    return (this.getToken() != null && this.getUsername() != null)
+  }
+
+  getUsername():string {
     return <string>localStorage.getItem('username');
   }
 
@@ -39,13 +35,20 @@ class SpotifyDataService {
     return localStorage.getItem('spotify_token');
   }
 
-  setUsername(token: string) {
+  setUsername(token: string): boolean {
     const fd = new FormData();
+    let res = false;
     fd.append('access_token', token)
     http.post(`/`, fd).then(data => {
-      console.log(data.data)
-      localStorage.setItem('username', data.data.user);
+      if('error' in data.data && data.data.error) {
+        res = false;
+      } else {
+        localStorage.setItem('username', data.data.user);
+        res = true;
+      }
     });
+    return res;
+    // return false;
   }
 
   logout() {
