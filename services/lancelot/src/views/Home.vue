@@ -6,7 +6,6 @@
           Camelot
         </h2>
         <div class="row google-form text-center d-flex justify-content-center">
-<!--          <form action="http://google.com/search" method="get" class="col-8">-->
             <div class="form-group col-8">
               <input v-model="searchTerm" class="form-control google-search" >
               <div class="btn-group ">
@@ -14,7 +13,6 @@
                 <b-button variant="primary" @click="getDiscover()">Discover</b-button>
               </div>
             </div>
-<!--          </form>-->
         </div>
       </div>
     </div>

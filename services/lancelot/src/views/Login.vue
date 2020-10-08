@@ -19,18 +19,21 @@ import router from "@/router";
 })
 export default class Login extends Vue {
   url: string;
-
-  constructor() {
-    super();
-    this.url = SpotifyDataService.getSpotifyURL();
+mounted() {
 
     const url = this.$route.hash.slice(1);
     const parsed = this.parse_query_string(url);
-
     if (parsed.has('access_token')) {
       SpotifyDataService.login(parsed.get("access_token"));
+      SpotifyDataService.setUsername(parsed.get("access_token"));
       router.push('/');
     }
+}
+  constructor() {
+    super();
+    var path = this.$router.resolve({name: 'Login'}).href
+    var fullUrl = window.location.origin + path
+    this.url = SpotifyDataService.getSpotifyURL(fullUrl);
   }
 
   parse_query_string(query: string) {
