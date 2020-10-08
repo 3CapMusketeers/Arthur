@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+from flask import jsonify
 
 
 class MerlinAPI:
@@ -80,7 +81,7 @@ class MerlinAPI:
 
         user = self.spotify_api.get_user_profile()
 
-        url = self.MERLIN_BASE_URL + '/personal-models/' + user['id'] + '/classification'
+        url = self.MERLIN_BASE_URL + '/personal-models/' + user['id'] + '/classification' # user['id'] error if expired. put error here
 
         tracks = []
 
@@ -93,15 +94,13 @@ class MerlinAPI:
                 tracks += self.spotify_api.get_tracks_from_playlist(playlist['id'])
 
         classify_tracks = []
-
         for track in tracks:
-
-            if 'track' in track and 'preview_url' in track['track'] and track['track']['preview_url'] is not None:
-
-                classify_tracks.append({'id': track['track']['id'], 'url': track['track']['preview_url']})
+            if 'preview_url' in track and track['preview_url'] is not None:
+                classify_tracks.append({'id': track['id'], 'url': track['preview_url']})
 
         json = {'classify_tracks': classify_tracks}
 
         request = requests.post(url, json=json).json()
 
-        return request['tracks'] if 'tracks' in request else None
+        return request['tracks'] if 'tracks' in request else {'error':True, 'msg':request['msg']}
+
