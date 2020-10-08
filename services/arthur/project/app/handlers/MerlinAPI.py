@@ -1,41 +1,29 @@
 import os
 import json
 import requests
-from shared import spotify_api
+from flask import jsonify
 
 
 class MerlinAPI:
     """
-    A singleton class for Merlin's API.
+    A class for Merlin's API.
     """
-
-    __instance__ = None
 
     # Urls
 
-    BASE_URL = os.environ.get('MERLIN_BASE_URL')
+    MERLIN_BASE_URL = os.environ.get('MERLIN_BASE_URL')
 
-    def __init__(self):
+    def __init__(self, spotify_api):
 
-        if MerlinAPI.__instance__ is None:
-
-            MerlinAPI.__instance__ = self
-
-        else:
-
-            Exception('Cannot create a new MerlinAPI instance. Use \'get_instance() instead.\'')
-
-        self.access_token = None
-
-        self.refresh_token = None
+        self.spotify_api = spotify_api
 
     def create_model(self):
 
-        url = self.BASE_URL + '/personal-models'
+        url = self.MERLIN_BASE_URL + '/personal-models'
 
-        user = spotify_api.get_user_profile()
+        user = self.spotify_api.get_user_profile()
 
-        saved_tracks = spotify_api.get_user_saved_tracks()
+        saved_tracks = self.spotify_api.get_user_saved_tracks()
 
         tracks = []
 
@@ -53,11 +41,11 @@ class MerlinAPI:
 
     def classify_tracks(self, search_term):
 
-        url = self.BASE_URL + '/classifier'
+        url = self.MERLIN_BASE_URL + '/classifier'
 
-        user = spotify_api.get_user_profile()
+        user = self.spotify_api.get_user_profile()
 
-        tracks = spotify_api.get_user_saved_tracks()
+        tracks = self.spotify_api.get_user_saved_tracks()
 
         classify_tracks = []
 
@@ -67,13 +55,13 @@ class MerlinAPI:
 
                 classify_tracks.append({'id': track['track']['id'], 'url': track['track']['preview_url']})
 
-        playlists = spotify_api.search_playlist(search_term, limit=5)
+        playlists = self.spotify_api.search_playlist(search_term, limit=5)
 
         tracks = []
 
         for playlist in playlists:
 
-            tracks += spotify_api.get_tracks_from_playlist(playlist['id'])
+            tracks += self.spotify_api.get_tracks_from_playlist(playlist['id'])
 
         training_tracks = []
 
@@ -89,35 +77,31 @@ class MerlinAPI:
 
         return request['tracks'] if 'tracks' in request else None
 
-    def curated_playlist(self):
+    def curated_playlist(self, search_term):
 
-        user = spotify_api.get_user_profile()
+        user = self.spotify_api.get_user_profile()
 
-        url = self.BASE_URL + '/personal-models/' + user['id'] + '/classification'
 
-        tracks = spotify_api.get_user_saved_tracks()
+        url = self.MERLIN_BASE_URL + '/personal-models/' + user['id'] + '/classification' # user['id'] error if expired. put error here
+
+        tracks = []
+
+        playlists = self.spotify_api.search_playlist(search_term)
+
+        for playlist in playlists:
+
+            if 'id' in playlist:
+
+                tracks += self.spotify_api.get_tracks_from_playlist(playlist['id'])
 
         classify_tracks = []
-
         for track in tracks:
-
-            if 'track' in track and 'preview_url' in track['track'] and track['track']['preview_url'] is not None:
-
-                classify_tracks.append({'id': track['track']['id'], 'url': track['track']['preview_url']})
+            if 'preview_url' in track and track['preview_url'] is not None:
+                classify_tracks.append({'id': track['id'], 'url': track['preview_url']})
 
         json = {'classify_tracks': classify_tracks}
 
         request = requests.post(url, json=json).json()
 
-        return request['tracks'] if 'tracks' in request else None
+        return request['tracks'] if 'tracks' in request else {'error':True, 'msg':request['msg']}
 
-    @staticmethod
-    def get_instance():
-
-        if MerlinAPI.__instance__ is None:
-
-            return MerlinAPI()
-
-        else:
-
-            return MerlinAPI.__instance__

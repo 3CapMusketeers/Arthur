@@ -1,30 +1,27 @@
+from project.app.handlers.MerlinAPIHandler import MerlinAPIHandler
 from project.app.handlers.spotify.SpotifyAPI import SpotifyAPI
 
 
 class SpotifyAPIHandler:
 
-    def authenticate(self, args):
-        """
-        If the user authorized this arthur, then finish the user authentication by requesting an access and refresh
-        tokens. Or if the user did authenticated or his/her token expired then request a new access token (refresh).
-        This function should be called whenever a new session is created or the user's access token expired.
-        :param args: Dict
-        :return: Bool
-            True if the user was authenticated. False if otherwise (most likely the user did not authorized this arthur).
-        """
+    def saved_tracks(self, access_token, search_term):
 
-        spotify_api = SpotifyAPI()
+        spotify_api = SpotifyAPI(access_token)
 
-        # Get and set access token.
+        merlin_api_handler = MerlinAPIHandler(spotify_api)
 
-        if 'code' in args and args['code'] is not None:
+        return merlin_api_handler.classify_tracks(search_term)
 
-            access_token = spotify_api.request_access_and_refresh_tokens(args['code'])
+    def recommended(self, access_token, search_term):
 
-            if access_token is not None:
+        spotify_api = SpotifyAPI(access_token)
 
-                spotify_api.set_access_token(access_token)
+        merlin_api_handler = MerlinAPIHandler(spotify_api)
 
-                return True
+        return merlin_api_handler.curated_playlist(search_term)
 
-        return False
+
+
+
+
+

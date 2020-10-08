@@ -6,10 +6,8 @@ import urllib
 
 class SpotifyAPI:
     """
-    A singleton class for Spotify's API.
+    A class for Spotify's API.
     """
-
-    __instance__ = None
 
     # Urls
 
@@ -23,19 +21,60 @@ class SpotifyAPI:
     CLIENT_ID = os.environ.get('CLIENT_ID')
     CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
 
-    def __init__(self):
+    def __init__(self, access_token):
 
-        if SpotifyAPI.__instance__ is None:
+        self.access_token = access_token
 
-            SpotifyAPI.__instance__ = self
+    def add_items_to_playlist(self, playlist_id, uris):
 
-        else:
+        url = self.BASE_URL + '/playlists/' + playlist_id + '/tracks'
 
-            Exception('Cannot create a new SpotifyAPI instance. Use \'get_instance() instead.\'')
+        header = {'Authorization': 'Bearer ' + self.access_token if self.access_token is not None else ''}
 
-        self.access_token = None
+        json = {'uris': uris}
 
-        self.refresh_token = None
+        return requests.post(url, headers=header, json=json).json()
+
+    def create_playlist(self, name):
+
+        user = self.get_user_profile()
+
+        url = self.BASE_URL + '/users/' + user['id'] + '/playlists'
+
+        header = {'Authorization': 'Bearer ' + self.access_token if self.access_token is not None else ''}
+
+        json = {'name': name, 'description': 'Created using Camelot.'}
+
+        return requests.post(url, headers=header, json=json).json()
+
+    def get_several_tracks(self, ids):
+
+        url = self.BASE_URL + '/tracks'
+
+        header = {'Authorization': 'Bearer ' + self.access_token}
+
+        # The maximum number of allowed ids per request is 50, according to Spotify API. If ids is larger than 50,
+        # then break it down into chunks.
+
+        tracks = []
+
+        chunk = []
+
+        for i in range(0, len(ids)):
+
+            if i > 0 and i % 50 == 0 or i == len(ids) - 1:
+
+                params = {'ids': ','.join(chunk)}
+
+                response = requests.get(url, headers=header, params=params).json()
+
+                tracks += response['tracks'] if 'tracks' in response else []
+
+                chunk = []
+
+            chunk.append(ids[i])
+
+        return tracks
 
     def get_user_profile(self):
 
@@ -75,7 +114,7 @@ class SpotifyAPI:
 
         return saved_tracks
 
-    def search_playlist(self, search_term, limit=1):
+    def search_playlist(self, search_term, limit=5):
 
         url = self.BASE_URL + '/search'
 
@@ -138,50 +177,6 @@ class SpotifyAPI:
         return '%s?client_id=%s&response_type=code&redirect_uri=%s&scope=user-read-private,user-library-read' % \
               (self.AUTH_URL, self.CLIENT_ID, self.REDIRECT_URI)
 
-    def request_access_and_refresh_tokens(self, code):
-        """
-        Requests and returns access and refresh tokens.
-        :param code: String
-            From Spofity doc: An authorization code that can be exchanged for an access token.
-        :return: String, String or None, None if something went wrong.
-            The access and refresh tokens.
-        """
-
-        data = {'grant_type': 'authorization_code', 'code': code, 'redirect_uri': self.REDIRECT_URI,
-                'client_id': self.CLIENT_ID, 'client_secret': self.CLIENT_SECRET}
-
-        request = requests.post(self.API_TOKEN_URL, data=data)
-
-        request_json = json.loads(request.text)
-
-        if 'access_token' in request_json and 'refresh_token' in request_json:
-
-            return request_json['access_token'], request_json['refresh_token']
-
-        return None, None
-
-    def request_new_access_token(self, refresh_token):
-        """
-        Returns a new access token. This function should be called when the user's access token has expired.
-        :param refresh_token: String
-            The refresh token that was obtained from the 'request_access_and_refresh_tokens()' function.
-        :return: String or None if something went wrong.
-            The new access token.
-        """
-
-        data = {'grant_type': 'refresh_token', 'refresh_token': refresh_token, 'client_id': self.CLIENT_ID,
-                'client_secret': self.CLIENT_SECRET}
-
-        request = requests.post(self.API_TOKEN_URL, data=data)
-
-        request_json = json.loads(request.text)
-
-        if 'access_token' in request_json:
-
-            return request_json['access_token']
-
-        return None
-
     def set_access_token(self, token):
         """
         Sets a new access token.
@@ -190,17 +185,9 @@ class SpotifyAPI:
 
         self.access_token = token
 
-    def set_refresh_token(self, token):
-        """
-        Sets a new refresh token.
-        :param token: String
-        """
-
-        self.refresh_token = token
-
     def is_authenticated(self):
 
-        if self.access_token and self.refresh_token:
+        if self.access_token:
 
             user = self.get_user_profile()
 
@@ -213,14 +200,3 @@ class SpotifyAPI:
                 return True
 
         return False
-
-    @staticmethod
-    def get_instance():
-
-        if SpotifyAPI.__instance__ is None:
-
-            return SpotifyAPI()
-
-        else:
-
-            return SpotifyAPI.__instance__

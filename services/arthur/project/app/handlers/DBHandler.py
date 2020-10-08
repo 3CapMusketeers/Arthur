@@ -5,6 +5,7 @@ from project.app import models
 
 db = SQLAlchemy()
 
+
 class DBHandler:
 
     def delete_user(self, user_id):
