@@ -39,6 +39,16 @@ class MerlinAPI:
 
         return request
 
+    def check_model(self):
+
+        user = self.spotify_api.get_user_profile()
+
+        url = self.MERLIN_BASE_URL + '/personal-models/' + user['id']
+
+        request = requests.get(url).json()
+
+        return request
+
     def classify_tracks(self, search_term):
 
         url = self.MERLIN_BASE_URL + '/classifier'
@@ -75,7 +85,17 @@ class MerlinAPI:
 
         request = requests.post(url, json=json).json()
 
-        return request['tracks'] if 'tracks' in request else None
+        results = []
+
+        if 'tracks' in request:
+
+            tracks = self.spotify_api.get_several_tracks(request['tracks'])
+
+            for track in tracks:
+
+                results.append({'id': track['id'], 'name': track['name'], 'uri': track['uri']})
+
+        return {'error': True, 'msg': request['msg']} if 'msg' in requests else results
 
     def curated_playlist(self, search_term):
 
@@ -94,6 +114,7 @@ class MerlinAPI:
                 tracks += self.spotify_api.get_tracks_from_playlist(playlist['id'])
 
         classify_tracks = []
+
         for track in tracks:
             if 'preview_url' in track and track['preview_url'] is not None:
                 classify_tracks.append({'id': track['id'], 'url': track['preview_url']})
@@ -102,5 +123,15 @@ class MerlinAPI:
 
         request = requests.post(url, json=json).json()
 
-        return request['tracks'] if 'tracks' in request else {'error':True, 'msg':request['msg']}
+        results = []
+
+        if 'tracks' in request:
+
+            tracks = self.spotify_api.get_several_tracks(request['tracks'])
+
+            for track in tracks:
+
+                results.append({'id': track['id'], 'name': track['name'], 'uri': track['uri']})
+
+        return {'error': True, 'msg': request['msg']} if 'msg' in requests else results
 

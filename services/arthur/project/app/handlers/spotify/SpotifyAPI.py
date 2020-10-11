@@ -21,7 +21,7 @@ class SpotifyAPI:
     CLIENT_ID = os.environ.get('CLIENT_ID')
     CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
 
-    def __init__(self, access_token):
+    def __init__(self, access_token=None):
 
         self.access_token = access_token
 
@@ -62,7 +62,9 @@ class SpotifyAPI:
 
         for i in range(0, len(ids)):
 
-            if i > 0 and i % 50 == 0 or i == len(ids) - 1:
+            chunk.append(ids[i])
+
+            if len(chunk) == 50 or i == len(ids) - 1:
 
                 params = {'ids': ','.join(chunk)}
 
@@ -71,8 +73,6 @@ class SpotifyAPI:
                 tracks += response['tracks'] if 'tracks' in response else []
 
                 chunk = []
-
-            chunk.append(ids[i])
 
         return tracks
 
@@ -99,6 +99,10 @@ class SpotifyAPI:
         while True:
 
             request = requests.get(url, headers=header, params=params).json()
+
+            if 'error' in request:
+
+                break
 
             if 'items' in request:
 
@@ -146,13 +150,13 @@ class SpotifyAPI:
 
         return None
 
-    def get_tracks_from_playlist(self, playlist_id):
+    def get_tracks_from_playlist(self, playlist_id, limit=50):
 
         url = self.BASE_URL + '/playlists/' + playlist_id + '/tracks'
 
         header = {'Authorization': 'Bearer ' + self.access_token}
 
-        params = {'limit': '50'}
+        params = {'limit': limit}
 
         request = requests.get(url, headers=header, params=params).json()
 

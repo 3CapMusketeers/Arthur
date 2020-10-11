@@ -12,13 +12,19 @@ from project import db
 
 spotify_blueprint = Blueprint('spotify_blueprint', __name__)
 
+
 @spotify_blueprint.route('/', methods=['POST'])
 def index():
+
     if 'access_token' in request.form:
 
         access_token = request.form['access_token']
 
         spotify_api = SpotifyAPI(access_token)
+
+        merlin_api_handler = MerlinAPIHandler(spotify_api)
+
+        merlin_api_handler.create_model()
 
         # Get user profile and insert into db if not already.
         user = spotify_api.get_user_profile()
@@ -47,34 +53,42 @@ def authorization():
 
     return {'spotify_auth_url': spotify_api.request_authorization_to_access_data_url()}
 
+
 @spotify_blueprint.route('/users/saved-tracks', methods=['POST']) # Weird name
 def saved_tracks():
 
     if 'access_token' in request.form and 'search_term' in request.form:
 
-        spotify_handler = SpotifyAPIHandler()
+        spotify_api = SpotifyAPI(request.form['access_token'])
 
-        return spotify_handler.saved_tracks(request.form['search_term'], request.args['search_term'])
+        merlin_api_handler = MerlinAPIHandler(spotify_api)
+
+        if merlin_api_handler.check_model():
+
+            spotify_handler = SpotifyAPIHandler()
+
+            return spotify_handler.saved_tracks(request.form['access_token'], request.form['search_term'])
+
+        return {'Error': 'Personal model does not exist.'}
 
     return {'Error': 'Search term missing.'}
+
 
 @spotify_blueprint.route('/users/recommended', methods=['POST'])
 def recommended():
 
     if 'access_token' in request.form and 'search_term' in request.form:
 
-        spotify_handler = SpotifyAPIHandler()
+        spotify_api = SpotifyAPI(request.form['access_token'])
 
-        recommend = spotify_handler.recommended(request.form['search_term'], request.args['search_term'])
+        merlin_api_handler = MerlinAPIHandler(spotify_api)
 
-        if 'error' in recommend:
+        if merlin_api_handler.check_model():
 
-            spotify_api = SpotifyAPI(request.form['search_term'])
+            spotify_handler = SpotifyAPIHandler()
 
-            merlin_api_handler = MerlinAPIHandler(spotify_api)
+            return spotify_handler.recommended(request.form['access_token'], request.args['search_term'])
 
-            merlin_api_handler.create_model()
+        return {'Error': 'Personal model does not exist.'}
 
-            return recommend
-    
     return {'Error': 'Search term missing.'}

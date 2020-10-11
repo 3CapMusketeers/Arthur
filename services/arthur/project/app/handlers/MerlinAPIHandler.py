@@ -13,6 +13,16 @@ class MerlinAPIHandler:
 
         return 'msg' in result and result['msg'] == 'ok'
 
+    def check_model(self):
+
+        result = self.merlin_api.check_model()
+
+        if 'msg' in result:
+
+            return result['msg']
+
+        return None
+
     def classify_tracks(self, search_term):
 
         return self.merlin_api.classify_tracks(search_term)
