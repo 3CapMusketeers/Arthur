@@ -95,7 +95,7 @@ class MerlinAPI:
 
                 results.append({'id': track['id'], 'name': track['name'], 'uri': track['uri']})
 
-        return {'error': True, 'msg': request['msg']} if 'msg' in requests else results
+        return {'error': True, 'msg': request['msg']} if 'msg' in request else results
 
     def curated_playlist(self, search_term):
 
@@ -133,5 +133,5 @@ class MerlinAPI:
 
                 results.append({'id': track['id'], 'name': track['name'], 'uri': track['uri']})
 
-        return {'error': True, 'msg': request['msg']} if 'msg' in requests else results
+        return {'error': True, 'msg': request['msg']} if 'msg' in request else results
 

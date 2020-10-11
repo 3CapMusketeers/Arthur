@@ -39,7 +39,8 @@ def index():
         return jsonify(user=user['display_name'])
 
     else:
-        return jsonify(error=True, msg='No access token. Use spotify URL to authenticate', url=url_for('spotify_blueprint.authorization'))
+        return jsonify(error=True, msg='No access token. Use spotify URL to authenticate',
+                       url=url_for('spotify_blueprint.authorization'))
 
 
 @spotify_blueprint.route('/authorization', methods=['GET'])
@@ -92,3 +93,31 @@ def recommended():
         return {'Error': 'Personal model does not exist.'}
 
     return {'Error': 'Search term missing.'}
+
+
+@spotify_blueprint.route('/users/playlists', methods=['POST'])
+def playlists():
+
+    if 'access_token' in request.form and 'name' in request.form:
+
+        spotify_handler = SpotifyAPIHandler()
+
+        playlist = spotify_handler.create_playlist(request.form['access_token'], request.form['name'])
+
+        if 'id' in playlist and 'uris' in request.form:
+
+            return spotify_handler.add_items_to_playlist(request.form['access_token'], playlist['id'],
+                                                         request.form['uris'])
+
+        return playlist
+
+
+@spotify_blueprint.route('/users/playlists/<playlist_id>', methods=['POST'])
+def add_items_to_playlist(playlist_id):
+
+    if 'access_token' in request.form and 'uris' in request.form:
+
+        spotify_handler = SpotifyAPIHandler()
+
+        return spotify_handler.add_items_to_playlist(request.form['access_token'], playlist_id, request.form['uris'])
+

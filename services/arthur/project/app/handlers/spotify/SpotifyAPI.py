@@ -178,7 +178,7 @@ class SpotifyAPI:
         :return: String
         """
 
-        return '%s?client_id=%s&response_type=code&redirect_uri=%s&scope=user-read-private,user-library-read' % \
+        return '%s?client_id=%s&response_type=code&redirect_uri=%s&scope=user-read-private,user-library-read,playlist-modify-public,playlist-modify-private' % \
               (self.AUTH_URL, self.CLIENT_ID, self.REDIRECT_URI)
 
     def set_access_token(self, token):

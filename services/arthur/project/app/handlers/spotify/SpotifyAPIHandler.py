@@ -6,6 +6,18 @@ from project.app.handlers.spotify.SpotifyAPI import SpotifyAPI
 
 class SpotifyAPIHandler:
 
+    def add_items_to_playlist(self, access_token, playlist_id, uris):
+
+        spotify_api = SpotifyAPI(access_token)
+
+        return spotify_api.add_items_to_playlist(playlist_id, uris)
+
+    def create_playlist(self, access_token, name):
+
+        spotify_api = SpotifyAPI(access_token)
+
+        return spotify_api.create_playlist(name)
+
     def saved_tracks(self, access_token, search_term):
 
         spotify_api = SpotifyAPI(access_token)
