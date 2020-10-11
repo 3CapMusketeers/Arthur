@@ -19,19 +19,15 @@ class MerlinAPIHandler:
 
         return self.is_user_authenticated
 
-    def check_model(self):
+    def check_model(self, user_id):
 
-        if self.is_user_authenticated is True:
+        result = self.merlin_api.check_model(user_id)
 
-            result = self.merlin_api.check_model()
+        if 'msg' in result:
 
-            if 'msg' in result:
+            return result['msg']
 
-                return result['msg']
-
-            return None
-
-        return self.is_user_authenticated
+        return None
 
     def classify_tracks(self, search_term):
 

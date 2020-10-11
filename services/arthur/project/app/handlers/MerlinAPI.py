@@ -23,6 +23,10 @@ class MerlinAPI:
 
         user = self.spotify_api.get_user_profile()
 
+        if self.check_model(user['id']):
+
+            return {'status': 'Model already exists'}
+
         saved_tracks = self.spotify_api.get_user_saved_tracks()
 
         tracks = []
@@ -37,11 +41,9 @@ class MerlinAPI:
 
         return requests.post(url, json=json).json()
 
-    def check_model(self):
+    def check_model(self, user_id):
 
-        user = self.spotify_api.get_user_profile()
-
-        url = self.MERLIN_BASE_URL + '/personal-models/' + user['id']
+        url = self.MERLIN_BASE_URL + '/personal-models/' + user_id
 
         return requests.get(url).json()
 
