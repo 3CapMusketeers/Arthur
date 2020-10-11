@@ -35,9 +35,7 @@ class MerlinAPI:
 
         json = {'uid': user['id'], 'tracks': tracks}
 
-        request = requests.post(url, json=json).json()
-
-        return request
+        return requests.post(url, json=json).json()
 
     def check_model(self):
 
@@ -45,9 +43,7 @@ class MerlinAPI:
 
         url = self.MERLIN_BASE_URL + '/personal-models/' + user['id']
 
-        request = requests.get(url).json()
-
-        return request
+        return requests.get(url).json()
 
     def classify_tracks(self, search_term):
 

@@ -58,56 +58,68 @@ def authorization():
 @spotify_blueprint.route('/users/saved-tracks', methods=['POST']) # Weird name
 def saved_tracks():
 
-    if 'access_token' in request.form and 'search_term' in request.form:
+    if 'access_token' in request.form and 'search_term' in request.args:
 
         spotify_api = SpotifyAPI(request.form['access_token'])
 
-        merlin_api_handler = MerlinAPIHandler(spotify_api)
+        model_exists = MerlinAPIHandler(spotify_api).check_model()
 
-        if merlin_api_handler.check_model():
+        if model_exists is True:
 
             spotify_handler = SpotifyAPIHandler()
 
-            return spotify_handler.saved_tracks(request.form['access_token'], request.form['search_term'])
+            return spotify_handler.saved_tracks(request.form['access_token'], request.args['search_term'])
 
-        return {'Error': 'Personal model does not exist.'}
+        return model_exists
 
-    return {'Error': 'Search term missing.'}
+    elif 'search_term' not in request.args:
+
+        return {'error': 'Search term missing.'}
+
+    else:
+
+        return {'error': 'No access token provided.'}
 
 
 @spotify_blueprint.route('/users/recommended', methods=['POST'])
 def recommended():
 
-    if 'access_token' in request.form and 'search_term' in request.form:
+    if 'access_token' in request.form and 'search_term' in request.args:
 
         spotify_api = SpotifyAPI(request.form['access_token'])
 
-        merlin_api_handler = MerlinAPIHandler(spotify_api)
+        model_exists = MerlinAPIHandler(spotify_api).check_model()
 
-        if merlin_api_handler.check_model():
+        if model_exists is True:
 
             spotify_handler = SpotifyAPIHandler()
 
             return spotify_handler.recommended(request.form['access_token'], request.args['search_term'])
 
-        return {'Error': 'Personal model does not exist.'}
+        return model_exists
 
-    return {'Error': 'Search term missing.'}
+    elif 'search_term' not in request.args:
+
+        return {'error': 'Search term missing.'}
+
+    else:
+
+        return {'error': 'No access token provided.'}
 
 
 @spotify_blueprint.route('/users/playlists', methods=['POST'])
 def playlists():
 
-    if 'access_token' in request.form and 'name' in request.form:
+    if 'access_token' in request.json and 'name' in request.json:
 
         spotify_handler = SpotifyAPIHandler()
 
-        playlist = spotify_handler.create_playlist(request.form['access_token'], request.form['name'])
+        playlist = spotify_handler.create_playlist(request.json['access_token'], request.json['name'])
 
-        if 'id' in playlist and 'uris' in request.form:
+        if 'id' in playlist and 'uris' in request.json:
 
-            return spotify_handler.add_items_to_playlist(request.form['access_token'], playlist['id'],
-                                                         request.form['uris'])
+            return spotify_handler.add_items_to_playlist(request.json['access_token'], playlist['id'],
+                                                         request.json['uris'])
 
         return playlist
 
@@ -115,9 +127,9 @@ def playlists():
 @spotify_blueprint.route('/users/playlists/<playlist_id>', methods=['POST'])
 def add_items_to_playlist(playlist_id):
 
-    if 'access_token' in request.form and 'uris' in request.form:
+    if 'access_token' in request.json and 'uris' in request.json:
 
         spotify_handler = SpotifyAPIHandler()
 
-        return spotify_handler.add_items_to_playlist(request.form['access_token'], playlist_id, request.form['uris'])
+        return spotify_handler.add_items_to_playlist(request.json['access_token'], playlist_id, request.json['uris'])
 

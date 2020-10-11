@@ -195,12 +195,12 @@ class SpotifyAPI:
 
             user = self.get_user_profile()
 
-            if 'error' in user and 'message' in user['error'] and user['error']['message'] == 'The access token expired':
+            if 'error' in user and 'message' in user['error']:
 
-                return False
+                return user
 
             else:
 
                 return True
 
-        return False
+        return {'error', 'No access token provided'}
