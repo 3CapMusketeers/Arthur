@@ -62,9 +62,9 @@ def saved_tracks():
 
         spotify_api = SpotifyAPI(request.form['access_token'])
 
-        model_exists = MerlinAPIHandler(spotify_api).check_model()
+        user_id = spotify_api.get_user_profile()['id']
 
-        if model_exists is True:
+        if MerlinAPIHandler(spotify_api).check_model(user_id) is True:
 
             spotify_handler = SpotifyAPIHandler()
 
@@ -88,9 +88,9 @@ def recommended():
 
         spotify_api = SpotifyAPI(request.form['access_token'])
 
-        model_exists = MerlinAPIHandler(spotify_api).check_model()
+        user_id = spotify_api.get_user_profile()['id']
 
-        if model_exists is True:
+        if MerlinAPIHandler(spotify_api).check_model(user_id) is True:
 
             spotify_handler = SpotifyAPIHandler()
 

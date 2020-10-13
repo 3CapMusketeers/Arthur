@@ -54,7 +54,7 @@ class SpotifyAPIHandler:
 
             merlin_api_handler = MerlinAPIHandler(spotify_api)
 
-            return merlin_api_handler.curated_playlist(search_term)
+            return jsonify(track=smerlin_api_handler.curated_playlist(search_term))
 
         return is_user_authenticated
 
