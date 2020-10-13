@@ -19,8 +19,25 @@ class SpotifyDataService {
     return actualToken;
   }
 
+  savePlaylist(name: string, tracks: any) {
+    const fd = new FormData();
+    fd.append('access_token', this.getToken());
+    fd.append('name', name);
+    fd.append('uris', tracks)
+    return http.post(`/users/playlists`, fd);
+  }
+
   createPlaylist(term: string) {
-    return http.post(`/users/${this.getToken()}/saved-tracks?search_term=${term}`, {})
+    const fd = new FormData();
+    fd.append('access_token', this.getToken());
+
+    return http.post(`/users/saved-tracks?search_term=${term}`, fd);
+  }
+
+  discover(term: string) {
+    const fd = new FormData();
+    fd.append('access_token', this.getToken());
+    return http.post(`/users/recommended?search_term=${term}`, fd);
   }
 
   isLoggedIn() {
@@ -48,7 +65,6 @@ class SpotifyDataService {
       }
     });
     return res;
-    // return false;
   }
 
   logout() {

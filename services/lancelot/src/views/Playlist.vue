@@ -2,28 +2,28 @@
   <div class="playlist">
     <div class="row h-100 d-flex justify-content-center">
       <div class="col">
-        <div class="row text-center">
-          <div class="input-group">
-            <input type="text" class="form-control google-search" name="q">
-            <b-button variant="primary ml-3">Create Playlist</b-button>
-            <b-button variant="primary mx-3">Discover</b-button>
-          </div>
-        </div>
+<!--        <div class="row text-center">-->
+<!--          <div class="input-group">-->
+<!--            <input type="text" class="form-control google-search" name="q">-->
+<!--            <b-button variant="primary ml-3">Create Playlist</b-button>-->
+<!--            <b-button variant="primary mx-3">Discover</b-button>-->
+<!--          </div>-->
+<!--        </div>-->
 
         <table class="table">
           <thead>
           <tr>
-            <th scope="col">#</th>
+            <th scope="col" >#</th>
             <th scope="col">Song</th>
             <th scope="col">Artist</th>
             <th scope="col">Include</th>
           </tr>
           </thead>
           <tbody>
-          <tr v-for="track in tracks" v-bind:key="track.id">
-            <th scope="row">{{track.id}}</th>
-            <td>{{track.song}}</td>
-            <td>{{track.artist}}</td>
+          <tr v-for="(track, index) in tracks" v-bind:key="track.id">
+            <td>{{index}}</td>
+            <td>{{track.name}}</td>
+            <td>{{track.artists}}</td>
             <td>
               <input type="checkbox" aria-label="Checkbox for following text input">
             </td>
@@ -31,7 +31,7 @@
           </tbody>
         </table>
         <div class="d-flex justify-content-center">
-          <b-button variant="primary">
+          <b-button variant="primary" @click="savePlaylist()">
             <b-icon icon="plus"></b-icon>
             Save Playlist
           </b-button>
@@ -43,15 +43,24 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
+import SpotifyDataService from "@/services/SpotifyDataService";
 
 @Component({
   components: {},
 })
 export default class Playlist extends Vue {
   tracks = {};
+  index = 0;
  mounted() {
   this.tracks = this.$store.getters.tracks;
  }
+
+ savePlaylist() {
+  SpotifyDataService.savePlaylist('TEST', this.tracks).then(d =>{
+    console.log(d);
+  });
+ }
+
 }
 </script>
 

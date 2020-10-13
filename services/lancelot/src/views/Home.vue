@@ -40,26 +40,19 @@ export default class Home extends Vue {
   createPlaylist() {
     this.loading = true;
     SpotifyDataService.createPlaylist(this.searchTerm).then(d => {
-      let songs = [{
-        song: 'Ultralight Beam',
-        artist: 'Kanye Oeste'
-      },
-        {
-          song: 'MIA ',
-          artist: 'Bad Bunny'
-        },
-        {
-          song: 'Infeliz',
-          artist: 'Arcangel, Bad Bunny'
-        }]
-      this.$store.commit('changeTracks', songs);
+      this.$store.commit('changeTracks', d.data.tracks);
       console.log(d)
       this.$router.push({name: 'Playlist'});
     }).finally(() => (this.loading = false));
 }
 
   getDiscover() {
-    console.log('clicked get discover')
+    this.loading = true;
+    SpotifyDataService.createPlaylist(this.searchTerm).then(d => {
+      this.$store.commit('changeTracks', d.data.tracks);
+      console.log(d)
+      this.$router.push({name: 'Playlist'});
+    }).finally(() => (this.loading = false));
   }
 
 
