@@ -81,7 +81,6 @@ class MerlinAPI:
 
         user = self.spotify_api.get_user_profile()
 
-
         url = self.MERLIN_BASE_URL + '/personal-models/' + user['id'] + '/classification' # user['id'] error if expired. put error here
 
         tracks = []

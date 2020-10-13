@@ -1,3 +1,5 @@
+from flask import jsonify
+
 from project.app.handlers.MerlinAPIHandler import MerlinAPIHandler
 from project.app.handlers.spotify.SpotifyAPI import SpotifyAPI
 
@@ -10,7 +12,7 @@ class SpotifyAPIHandler:
 
         merlin_api_handler = MerlinAPIHandler(spotify_api)
 
-        return merlin_api_handler.classify_tracks(search_term)
+        return jsonify(tracks=merlin_api_handler.classify_tracks(search_term))
 
     def recommended(self, access_token, search_term):
 
