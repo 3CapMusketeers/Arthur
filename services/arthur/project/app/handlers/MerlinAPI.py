@@ -90,8 +90,12 @@ class MerlinAPI:
             tracks = self.spotify_api.get_several_tracks(request['tracks'])
 
             for track in tracks:
+                artists = []
+                if 'artists' in track:
+                    artistlist = [artist['name'] for artist in track['artists']]
 
-                results.append({'id': track['id'], 'name': track['name'], 'uri': track['uri']})
+                    artists =  ", ". join(map(str, artistlist))
+                results.append({'id': track['id'], 'name': track['name'], 'uri': track['uri'], 'artists': artists})
 
         return {'error': True, 'msg': request['msg']} if 'msg' in request else results
 
@@ -123,13 +127,14 @@ class MerlinAPI:
 
         results = []
 
+
         if 'tracks' in request:
 
             tracks = self.spotify_api.get_several_tracks(request['tracks'])
 
             for track in tracks:
 
-                results.append({'id': track['id'], 'name': track['name'], 'uri': track['uri']})
+                results.append({'id': track['id'], 'name': track['name'], 'uri': track['uri'], 'artists': track['artists']})
 
         return {'error': True, 'msg': request['msg']} if 'msg' in request else results
 

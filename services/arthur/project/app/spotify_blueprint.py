@@ -55,7 +55,7 @@ def authorization():
     return {'spotify_auth_url': spotify_api.request_authorization_to_access_data_url()}
 
 
-@spotify_blueprint.route('/users/saved-tracks', methods=['POST']) # Weird name
+@spotify_blueprint.route('/users/saved-tracks', methods=['POST'])
 def saved_tracks():
 
     if 'access_token' in request.form and 'search_term' in request.args:
@@ -114,16 +114,16 @@ def recommended():
 @spotify_blueprint.route('/users/playlists', methods=['POST'])
 def playlists():
 
-    if 'access_token' in request.json and 'name' in request.json:
+    if 'access_token' in request.form and 'name' in request.form:
 
         spotify_handler = SpotifyAPIHandler()
 
-        playlist = spotify_handler.create_playlist(request.json['access_token'], request.json['name'])
+        playlist = spotify_handler.create_playlist(request.form['access_token'], request.form['name'])
 
-        if 'id' in playlist and 'uris' in request.json:
+        if 'id' in playlist and 'uris' in request.form:
 
-            return spotify_handler.add_items_to_playlist(request.json['access_token'], playlist['id'],
-                                                         request.json['uris'])
+            return spotify_handler.add_items_to_playlist(request.form['access_token'], playlist['id'],
+                                                         request.form['uris'])
 
         return playlist
 
