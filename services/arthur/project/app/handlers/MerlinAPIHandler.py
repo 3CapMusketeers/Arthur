@@ -1,3 +1,4 @@
+from flask import jsonify
 from project.app.handlers.MerlinAPI import MerlinAPI
 
 
@@ -33,14 +34,14 @@ class MerlinAPIHandler:
 
         if self.is_user_authenticated is True:
 
-            return self.merlin_api.classify_tracks(search_term)
+            return jsonify(tracks=self.merlin_api.classify_tracks(search_term))
 
-        return self.is_user_authenticated
+        return is_user_authenticated
 
     def curated_playlist(self, search_term):
 
         if self.is_user_authenticated is True:
 
-            return self.merlin_api.curated_playlist(search_term)
+            return jsonify(track=self.merlin_api.curated_playlist(search_term))
 
-        return self.is_user_authenticated
+        return is_user_authenticated

@@ -64,11 +64,13 @@ def saved_tracks():
 
         user_id = spotify_api.get_user_profile()['id']
 
-        if MerlinAPIHandler(spotify_api).check_model(user_id) is True:
+        model_exists = MerlinAPIHandler(spotify_api).check_model(user_id)
 
-            spotify_handler = SpotifyAPIHandler()
+        if model_exists is True:
 
-            return spotify_handler.saved_tracks(request.form['access_token'], request.args['search_term'])
+            merlin_api_handler = MerlinAPIHandler(spotify_api)
+
+            return merlin_api_handler.classify_tracks(request.args['search_term'])
 
         return model_exists
 
@@ -90,11 +92,13 @@ def recommended():
 
         user_id = spotify_api.get_user_profile()['id']
 
-        if MerlinAPIHandler(spotify_api).check_model(user_id) is True:
+        model_exists = MerlinAPIHandler(spotify_api).check_model(user_id)
 
-            spotify_handler = SpotifyAPIHandler()
+        if model_exists is True:
 
-            return spotify_handler.recommended(request.form['access_token'], request.args['search_term'])
+            merlin_api_handler = MerlinAPIHandler(spotify_api)
+
+            return merlin_api_handler.curated_playlist(request.args['search_term'])
 
         return model_exists
 
