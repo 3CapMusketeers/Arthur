@@ -33,7 +33,7 @@ export default class Login extends Vue {
     super();
     var path = this.$router.resolve({name: 'Login'}).href
     var fullUrl = window.location.origin + path;
-    this.url = SpotifyDataService.getSpotifyURL(fullUrl);
+    this.url = SpotifyDataService.getSpotifyURL(encodeURI(fullUrl));
   }
 
   parse_query_string(query: string) {
