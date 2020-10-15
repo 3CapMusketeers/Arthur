@@ -48,8 +48,8 @@ class SpotifyDataService {
     return <string>localStorage.getItem('username');
   }
 
-  getToken() {
-    return localStorage.getItem('spotify_token');
+  getToken(): string {
+    return <string>localStorage.getItem('spotify_token');
   }
 
   setUsername(token: string): boolean {
