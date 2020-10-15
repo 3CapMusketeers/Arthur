@@ -3,10 +3,12 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "@/views/Login.vue";
 import Playlist from "@/views/Playlist.vue";
+import NotFound from "@/views/NotFound.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
+  // { path: '*', component: NotFound },
   {
     path: "/",
     name: "Home",
@@ -35,7 +37,7 @@ const routes = [
 
 const router = new VueRouter({
   routes,
-  mode: 'history'
+  mode: 'hash'
 });
 
 export default router;
