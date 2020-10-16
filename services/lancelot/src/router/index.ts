@@ -4,6 +4,7 @@ import Home from "../views/Home.vue";
 import Login from "@/views/Login.vue";
 import Playlist from "@/views/Playlist.vue";
 import NotFound from "@/views/NotFound.vue";
+import Dashboard from "@/views/Dashboard.vue";
 
 Vue.use(VueRouter);
 
@@ -22,6 +23,11 @@ const routes = [
     path: "/playlist",
     name: "Playlist",
     component: Playlist
+  },
+  {
+    path: "/dashboard",
+    name: "Dashboard",
+    component: Dashboard
   },
   {
     path: "/about",

@@ -25,8 +25,8 @@ def create_app(script_info=None):
     app.config.from_object(app_settings)
 
     # set up extensions
-    db.init_app(app)
-    migrate.init_app(app, db)
+    #db.init_app(app)
+    #migrate.init_app(app, db)
 
     # Blueprints
     from project.app.spotify_blueprint import spotify_blueprint
