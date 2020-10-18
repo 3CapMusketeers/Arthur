@@ -5,7 +5,9 @@ class SpotifyDataService {
   clientId = "369a6c4b828e4dda98c6a47e891d5b2f";
   scopes = [
     'user-read-private',
-    'user-library-read'
+    'user-library-read',
+    'playlist-modify-public',
+    'playlist-modify-private'
   ];
   // redirectUri = "http://localhost:8080/login"; //Use route for this to get current url
   authEndpoint = 'https://accounts.spotify.com/authorize';
