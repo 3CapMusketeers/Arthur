@@ -14,7 +14,7 @@ services:
 
       # Constant
       - BASE_URL=https://api.spotify.com/v1
-      - MERLIN_BASE_URL=
+      - MERLIN_BASE_URL=http://localhost:5005/
       - AUTH_URL=https://accounts.spotify.com/authorize
       - API_TOKEN_URL=https://accounts.spotify.com/api/token
 
@@ -23,24 +23,33 @@ services:
       - CLIENT_ID=369a6c4b828e4dda98c6a47e891d5b2f
       - CLIENT_SECRET=5be944b9cb9b4897849438c3f586f9e5
 
-    depends_on:
-      - postgres
-
-  postgres:
+  merlin:
     build:
-      context: ./services/db
+      context: ../Merlin/
       dockerfile: Dockerfile
-    expose:
-      - 5432
+    ports:
+      - 5005:5005
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - FLASK_ENV=development
 
+#    depends_on:
+#      - postgres
+
+#  postgres:
+#    build:
+#      context: ./services/db
+#      dockerfile: Dockerfile
+#    expose:
+#      - 5432
+#    environment:
+#      - POSTGRES_USER=postgres
+#      - POSTGRES_PASSWORD=postgres
+#
   lancelot:
     build:
       context: ./services/lancelot
       dockerfile: Dockerfile
     ports:
-      - 8080:8080
+      - 80:80
     depends_on:
       - arthur

@@ -3,6 +3,8 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "@/views/Login.vue";
 import Playlist from "@/views/Playlist.vue";
+import NotFound from "@/views/NotFound.vue";
+import Dashboard from "@/views/Dashboard.vue";
 
 Vue.use(VueRouter);
 
@@ -23,6 +25,11 @@ const routes = [
     component: Playlist
   },
   {
+    path: "/dashboard",
+    name: "Dashboard",
+    component: Dashboard
+  },
+  {
     path: "/about",
     name: "About",
     // route level code-splitting
@@ -30,7 +37,8 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/About.vue")
-  }
+  },
+  { path: '*', component: NotFound },
 ];
 
 const router = new VueRouter({

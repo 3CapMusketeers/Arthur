@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: lancelot
+  name: lancelot
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: lancelot
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: lancelot
+    spec:
+      containers:
+      - image: gcr.io/aerobic-amphora-291504/lancelot:latest
+        imagePullPolicy: Always
+        name: lancelot-1
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  observedGeneration: 3
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lancelot
+  labels:
+    service: lancelot
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - nodePort: 30130
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: lancelot
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}
+
