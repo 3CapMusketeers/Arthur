@@ -22,9 +22,9 @@ def index():
 
         spotify_api = SpotifyAPI(access_token)
 
-        #merlin_api_handler = MerlinAPIHandler(spotify_api)
+        merlin_api_handler = MerlinAPIHandler(spotify_api)
 
-        #merlin_api_handler.create_model()
+        merlin_api_handler.create_model()
 
         # Get user profile and insert into db if not already.
         user = spotify_api.get_user_profile()
