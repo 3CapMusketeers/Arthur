@@ -45,7 +45,7 @@ class MerlinAPI:
 
         url = self.MERLIN_BASE_URL + '/personal-models/' + user_id
 
-        return requests.get(url).json()
+        return requests.get(url).json()['msg']
 
     def classify_tracks(self, search_term):
 
