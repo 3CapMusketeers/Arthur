@@ -196,7 +196,6 @@ class SpotifyAPI:
             user = self.get_user_profile()
 
             if 'error' in user and 'message' in user['error']:
-
                 return user
 
             else:

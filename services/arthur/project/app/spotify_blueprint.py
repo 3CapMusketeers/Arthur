@@ -22,9 +22,6 @@ def index():
 
         spotify_api = SpotifyAPI(access_token)
 
-        merlin_api_handler = MerlinAPIHandler(spotify_api)
-
-        merlin_api_handler.create_model()
 
         # Get user profile and insert into db if not already.
         user = spotify_api.get_user_profile()
@@ -66,13 +63,14 @@ def saved_tracks():
 
         model_exists = MerlinAPIHandler(spotify_api).check_model(user_id)
 
-        if model_exists is True:
+        #merlin_api_handler = MerlinAPIHandler(spotify_api)
+        #if not model_exists :
+        merlin_api_handler = MerlinAPIHandler(spotify_api)
 
-            merlin_api_handler = MerlinAPIHandler(spotify_api)
+        merlin_api_handler.create_model()
 
-            return merlin_api_handler.classify_tracks(request.args['search_term'])
-
-        return model_exists
+        # return model_exists
+        return merlin_api_handler.classify_tracks(request.args['search_term'])
 
     elif 'search_term' not in request.args:
 
@@ -94,13 +92,16 @@ def recommended():
 
         model_exists = MerlinAPIHandler(spotify_api).check_model(user_id)
 
-        if model_exists is True:
+        #if model_exists is True:
+        merlin_api_handler = MerlinAPIHandler(spotify_api)
 
-            merlin_api_handler = MerlinAPIHandler(spotify_api)
+        merlin_api_handler.create_model()
 
-            return merlin_api_handler.curated_playlist(request.args['search_term'])
+        # merlin_api_handler = MerlinAPIHandler(spotify_api)
 
-        return model_exists
+        return merlin_api_handler.curated_playlist(request.args['search_term'])
+
+        #return model_exists
 
     elif 'search_term' not in request.args:
 

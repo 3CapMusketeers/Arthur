@@ -13,9 +13,7 @@ class MerlinAPIHandler:
     def create_model(self):
 
         if self.is_user_authenticated is True:
-
             result = self.merlin_api.create_model()
-
             return 'msg' in result and result['msg'] == 'ok'
 
         return self.is_user_authenticated
@@ -24,11 +22,9 @@ class MerlinAPIHandler:
 
         result = self.merlin_api.check_model(user_id)
 
-        if 'msg' in result:
+        return result
 
-            return result['msg']
-
-        return None
+        # return None
 
     def classify_tracks(self, search_term):
 
