@@ -20,8 +20,8 @@ services:
 
       # Your settings go here
       - REDIRECT_URI=http://localhost:5000/authentication
-      - CLIENT_ID=369a6c4b828e4dda98c6a47e891d5b2f
-      - CLIENT_SECRET=5be944b9cb9b4897849438c3f586f9e5
+      - CLIENT_ID=
+      - CLIENT_SECRET=
 
   merlin:
     build:
