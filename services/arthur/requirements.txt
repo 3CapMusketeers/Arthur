@@ -1,0 +1,10 @@
+flask
+flask-wtf
+flask-admin
+flask-cors
+Flask-Login
+Flask-SQLAlchemy
+Flask-Migrate
+psycopg2-binary
+gunicorn
+requests

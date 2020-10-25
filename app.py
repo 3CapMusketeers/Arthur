@@ -1,21 +1,63 @@
 import os
 from flask import Flask, redirect, request
-from SpotifyAPI import SpotifyAPI
+from flask_migrate import Migrate
+from flask_admin import Admin
+from models import *
+from views.admin import *
+from shared import *
+from handlers.DBHandler import *
 from handlers.SpotifyAPIHandler import SpotifyAPIHandler
+from handlers.MerlinAPIHandler import MerlinAPIHandler
+
+# app configs
 
 app = Flask(__name__)
 
-spotify_api = SpotifyAPI()
+app.secret_key = os.environ.get('APP_SECRET_KEY')
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
+
+login_manager.init_app(app)
+
+# db init
+
+db.init_app(app)
+
+migrate = Migrate(app, db)
+
+# Admin page
+
+admin = Admin(app, name='Camelot Admin', template_mode='bootstrap3', index_view=AdminHomeView())
+
+admin.add_view(UserView(User, db.session))
+
+admin.add_view(PlaylistView(Playlist, db.session))
+
+admin.add_view(AdminUserView(AdminUser, db.session))
 
 
 @app.route('/')
-def hello_world():
+def home():
 
-    if spotify_api.access_token is None and spotify_api.refresh_token is None:
+    # Verify user is authenticated. Otherwise authenticate.
+
+    if not spotify_api.is_authenticated():
 
         return redirect('/authorization')
 
-    return {'hello': 'world'}
+    # Get user profile and insert into db if not already.
+
+    user = spotify_api.get_user_profile()
+
+    if 'error' in user:
+
+        return user
+
+    db_handler = DBHandler()
+
+    db_handler.insert_user(user)
+
+    return {'user': user['display_name']}
 
 
 @app.route('/authorization', methods=['GET'])
@@ -49,9 +91,15 @@ def authentication():
 
     if spotify_api_handler.authenticate(request.args):
 
-        # If the user was authenticated, return to home page.
+        # If the user was authenticated, tell Merlin to create personal model
 
-        return redirect('/')
+        merlin_api_handler = MerlinAPIHandler()
+
+        if merlin_api_handler.create_model():
+
+            # Personal model created. Return to home page
+
+            return redirect('/')
 
     # The user was not authenticated.
 
@@ -62,4 +110,4 @@ if __name__ == '__main__':
     if os.environ.get('IS_PROD'):
         app.run()
     else:
-        app.run(debug=True, use_debugger=True)
+        app.run(debug=True, use_debugger=True, port=5000)

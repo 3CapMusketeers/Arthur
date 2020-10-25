@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "6"
+  creationTimestamp: "2020-10-15T02:34:43Z"
+  generation: 7
+  labels:
+    app: lancelot
+  name: lancelot
+  namespace: default
+  resourceVersion: "2895662"
+  selfLink: /apis/apps/v1/namespaces/default/deployments/lancelot
+  uid: 4b5f87e4-447c-4223-a442-0de5e2b8f4d5
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: lancelot
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: lancelot
+    spec:
+      containers:
+      - image: gcr.io/aerobic-amphora-291504/lancelot:1.2.1
+        imagePullPolicy: Always
+        name: lancelot-1
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 120
+status:
+  conditions:
+  - lastTransitionTime: "2020-10-15T17:21:22Z"
+    lastUpdateTime: "2020-10-15T17:21:22Z"
+    message: Deployment does not have minimum availability.
+    reason: MinimumReplicasUnavailable
+    status: "False"
+    type: Available
+  - lastTransitionTime: "2020-10-15T17:18:15Z"
+    lastUpdateTime: "2020-10-15T17:28:18Z"
+    message: ReplicaSet "lancelot-6bbbc46c69" is progressing.
+    reason: ReplicaSetUpdated
+    status: "True"
+    type: Progressing
+  observedGeneration: 7
+  replicas: 2
+  unavailableReplicas: 2
+  updatedReplicas: 1

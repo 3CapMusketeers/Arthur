@@ -4,3 +4,4 @@
 </p>
 
 # Arthur - Main app 
+Arthur - python manage.py run 
