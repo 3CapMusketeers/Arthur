@@ -6,4 +6,4 @@
 #
 #echo "PostgreSQL started"
 
-gunicorn -b 0.0.0.0:5000 manage:app
+gunicorn --config /usr/src/app/gunicorn_config.py manage:app
