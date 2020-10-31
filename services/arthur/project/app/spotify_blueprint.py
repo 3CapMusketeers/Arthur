@@ -80,6 +80,12 @@ def saved_tracks():
 
         spotify_api_handler = SpotifyAPIHandler(request.form['access_token'])
 
+        is_authenticated = spotify_api_handler.is_authenticated()
+
+        if is_authenticated != True:
+
+            return jsonify(error=True, msg=is_authenticated), 401
+
         merlin_api_handler = MerlinAPIHandler(spotify_api_handler)
 
         return merlin_api_handler.classify_tracks(request.args['search_term']), 200
@@ -100,6 +106,12 @@ def recommended():
     if 'access_token' in request.form and 'search_term' in request.args:
 
         spotify_api_handler = SpotifyAPIHandler(request.form['access_token'])
+
+        is_authenticated = spotify_api_handler.is_authenticated()
+
+        if is_authenticated != True:
+
+            return jsonify(error=True, msg=is_authenticated), 401
 
         merlin_api_handler = MerlinAPIHandler(spotify_api_handler)
 

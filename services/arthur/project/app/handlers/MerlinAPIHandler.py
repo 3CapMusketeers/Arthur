@@ -46,7 +46,7 @@ class MerlinAPIHandler:
 
                 classify_tracks.append({'id': track['track']['id'], 'url': track['track']['preview_url']})
 
-        playlists = self.spotify_api_handler.search_playlist(search_term, limit=5)
+        playlists = self.spotify_api_handler.search_playlist(search_term, limit=1)
 
         playlist_tracks = []
 
@@ -62,7 +62,7 @@ class MerlinAPIHandler:
 
                 training_tracks.append({'id': track['id'], 'url': track['preview_url']})
 
-        response_tracks = self.merlin_api.classify_tracks(search_term)
+        response_tracks = self.merlin_api.classify_tracks(search_term, classify_tracks, training_tracks)
 
         if 'msg' in response_tracks:
 
@@ -108,7 +108,7 @@ class MerlinAPIHandler:
 
                 tracks.append({'id': track['id'], 'url': track['preview_url']})
 
-        response_tracks = self.merlin_api.curated_playlist(search_term, tracks)
+        response_tracks = self.merlin_api.curated_playlist(tracks)
 
         if 'msg' in response_tracks:
 
@@ -122,7 +122,13 @@ class MerlinAPIHandler:
 
             for track in tracks:
 
-                results.append({'id': track['id'], 'name': track['name'], 'uri': track['uri'],
-                                'artists': track['artists']})
+                artists = []
+
+                if 'artists' in track:
+                    artist_list = [artist['name'] for artist in track['artists']]
+
+                    artists = ", ".join(map(str, artist_list))
+
+                results.append({'id': track['id'], 'name': track['name'], 'uri': track['uri'], 'artists': artists})
 
         return jsonify(tracks=results)

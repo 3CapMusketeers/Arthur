@@ -88,7 +88,7 @@ class SpotifyAPI:
 
         return request
 
-    def get_user_saved_tracks(self):
+    def get_user_saved_tracks(self, pagination_url=None):
         """
         Sends a request to Spotify to return the user's saved tracks (max limit 50/request).
         :return: json
@@ -100,7 +100,7 @@ class SpotifyAPI:
 
         params = {'limit': '50'}
 
-        return requests.get(url, headers=header, params=params).json()
+        return requests.get(url if pagination_url is None else pagination_url, headers=header, params=params).json()
 
     def search_playlist(self, search_term, limit):
         """

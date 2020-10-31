@@ -48,9 +48,11 @@ class SpotifyAPIHandler:
 
         saved_tracks = []
 
+        pagination_url = None
+
         while True:
 
-            request = self.spotify_api.get_user_saved_tracks()
+            request = self.spotify_api.get_user_saved_tracks(pagination_url)
 
             if 'error' in request:
 
@@ -62,7 +64,7 @@ class SpotifyAPIHandler:
 
                 if 'next' in request and request['next'] is not None:
 
-                    url = request['next']
+                    pagination_url = request['next']
 
                 else:
 
