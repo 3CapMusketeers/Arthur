@@ -10,8 +10,6 @@ class MerlinAPIHandler:
 
         self.spotify_api = spotify_api
 
-        self.is_user_authenticated = spotify_api.is_authenticated()
-
     def create_model(self):
 
         saved_tracks = self.spotify_api.get_user_saved_tracks()

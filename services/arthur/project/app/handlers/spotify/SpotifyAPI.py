@@ -21,11 +21,17 @@ class SpotifyAPI:
     CLIENT_ID = os.environ.get('CLIENT_ID')
     CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
 
-    def __init__(self, access_token=None):
+    def __init__(self, access_token):
 
         self.access_token = access_token
 
     def add_items_to_playlist(self, playlist_id, uris):
+        """
+        Sends request to Spotify to add items to a playlist.
+        :param playlist_id: String
+        :param uris: String
+        :return: json
+        """
 
         url = self.BASE_URL + '/playlists/' + playlist_id + '/tracks'
 
@@ -35,7 +41,13 @@ class SpotifyAPI:
 
         return requests.post(url, headers=header, json=json).json()
 
-    def create_playlist(self, name):
+    def create_playlist(self, name, description='Created using Camelot.'):
+        """
+        Sends request to Spotify to create a new playlist.
+        :param name: String
+        :param description: String
+        :return: json
+        """
 
         user = self.get_user_profile()
 
@@ -43,40 +55,30 @@ class SpotifyAPI:
 
         header = {'Authorization': 'Bearer ' + self.access_token if self.access_token is not None else ''}
 
-        json = {'name': name, 'description': 'Created using Camelot.'}
+        json = {'name': name, 'description': description}
 
         return requests.post(url, headers=header, json=json).json()
 
     def get_several_tracks(self, ids):
+        """
+        Sends request to Spotify to return a list of tracks that matches the provided ids.
+        :param ids: String (each id separated by comma)
+        :return: json
+        """
 
         url = self.BASE_URL + '/tracks'
 
         header = {'Authorization': 'Bearer ' + self.access_token}
 
-        # The maximum number of allowed ids per request is 50, according to Spotify API. If ids is larger than 50,
-        # then break it down into chunks.
+        params = {'ids': ids}
 
-        tracks = []
-
-        chunk = []
-
-        for i in range(0, len(ids)):
-
-            chunk.append(ids[i])
-
-            if len(chunk) == 50 or i == len(ids) - 1:
-
-                params = {'ids': ','.join(chunk)}
-
-                response = requests.get(url, headers=header, params=params).json()
-
-                tracks += response['tracks'] if 'tracks' in response else []
-
-                chunk = []
-
-        return tracks
+        return requests.get(url, headers=header, params=params).json()
 
     def get_user_profile(self):
+        """
+        Sends request to Spotify to return the user's profile.
+        :return:
+        """
 
         url = self.BASE_URL + '/me'
 
@@ -87,6 +89,10 @@ class SpotifyAPI:
         return request
 
     def get_user_saved_tracks(self):
+        """
+        Sends a request to Spotify to return the user's saved tracks (max limit 50/request).
+        :return: json
+        """
 
         url = self.BASE_URL + '/me/tracks'
 
@@ -94,31 +100,15 @@ class SpotifyAPI:
 
         params = {'limit': '50'}
 
-        saved_tracks = []
+        return requests.get(url, headers=header, params=params).json()
 
-        while True:
-
-            request = requests.get(url, headers=header, params=params).json()
-
-            if 'error' in request:
-
-                break
-
-            if 'items' in request:
-
-                saved_tracks += request['items']
-
-                if 'next' in request and request['next'] is not None:
-
-                    url = request['next']
-
-                else:
-
-                    break
-
-        return saved_tracks
-
-    def search_playlist(self, search_term, limit=5):
+    def search_playlist(self, search_term, limit):
+        """
+        Send a request to Spotify to return playlist(s) that matches the search term.
+        :param search_term: String
+        :param limit: Int
+        :return: json
+        """
 
         url = self.BASE_URL + '/search'
 
@@ -126,15 +116,14 @@ class SpotifyAPI:
 
         params = {'q': search_term.replace(' ', '+').replace('\'', ''), 'type': 'playlist', 'limit': limit}
 
-        request = requests.get(url, headers=header, params=params).json()
-
-        if 'playlists' in request and 'items' in request['playlists']:
-
-            return request['playlists']['items']
-
-        return None
+        return requests.get(url, headers=header, params=params).json()
 
     def search_tracks(self, search_term):
+        """
+        Send a request to Spotify to return track(s) that matches the search term.
+        :param search_term: String
+        :return: json
+        """
 
         url = self.BASE_URL + '/search'
 
@@ -142,15 +131,15 @@ class SpotifyAPI:
 
         params = {'q': search_term.replace(' ', '+').replace('\'', ''), 'type': 'track'}
 
-        request = requests.get(url, headers=header, params=params).json()
+        return requests.get(url, headers=header, params=params).json()
 
-        if 'tracks' in request and 'items' in request['tracks']:
-
-            return request['tracks']['items']
-
-        return None
-
-    def get_tracks_from_playlist(self, playlist_id, limit=50):
+    def get_tracks_from_playlist(self, playlist_id, limit):
+        """
+        Sends a request to Spotify to return a list of tracks from a playlist that matches the provided id.
+        :param playlist_id: String
+        :param limit: Int
+        :return:
+        """
 
         url = self.BASE_URL + '/playlists/' + playlist_id + '/tracks'
 
@@ -158,23 +147,12 @@ class SpotifyAPI:
 
         params = {'limit': limit}
 
-        request = requests.get(url, headers=header, params=params).json()
-
-        tracks = []
-
-        if 'items' in request:
-
-            for item in request['items']:
-
-                if 'track' in item and item['track'] is not None:
-
-                    tracks.append(item['track'])
-
-        return tracks
+        return requests.get(url, headers=header, params=params).json()
 
     def request_authorization_to_access_data_url(self):
         """
-        Returns a Spotify URL for the user to authorize access to 'user-read-private' and 'user-library-read'.
+        Returns a Spotify URL for the user to authorize access to 'user-read-private', 'user-library-read',
+        'playlist-modify-public', and 'playlist-modify-private'.
         :return: String
         """
 
@@ -190,12 +168,18 @@ class SpotifyAPI:
         self.access_token = token
 
     def is_authenticated(self):
+        """
+        Verifies that the user is authenticated by requesting the user's profile. If the response is the user's
+        profile, then the token is assumed valid and the user is considered authenticated.
+        :return: dict/True
+        """
 
         if self.access_token:
 
             user = self.get_user_profile()
 
             if 'error' in user and 'message' in user['error']:
+
                 return user
 
             else:
