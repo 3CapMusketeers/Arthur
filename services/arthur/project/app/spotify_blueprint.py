@@ -1,4 +1,5 @@
 import os
+import threading
 # Package Imports
 from flask import Blueprint, redirect, request, url_for, jsonify
 
@@ -29,7 +30,15 @@ def index():
 
         merlin_api_handler = MerlinAPIHandler(spotify_api_handler)
 
-        merlin_api_handler.create_model()
+        def create_model():
+
+            merlin_api_handler.create_model()
+
+            # Do something here (e.g update database)
+
+        thread = threading.Thread(target=create_model)
+
+        thread.start()
 
         user = spotify_api_handler.get_user_profile()
 
@@ -59,7 +68,7 @@ def authorization():
 
     authorization_url = '%s?client_id=%s&response_type=code&redirect_uri=%s&scope=user-read-private,' \
                         'user-library-read,playlist-modify-public,playlist-modify-private' % (auth_url, client_id,
-                                                                                              redirect_uri)
+                                                                                              redirect_uri), 200
 
     return {'spotify_auth_url': authorization_url}
 
@@ -73,16 +82,16 @@ def saved_tracks():
 
         merlin_api_handler = MerlinAPIHandler(spotify_api_handler)
 
-        return merlin_api_handler.classify_tracks(request.args['search_term'])
+        return merlin_api_handler.classify_tracks(request.args['search_term']), 200
 
     elif 'search_term' not in request.args:
 
-        return {'error': 'Search term missing.'}
+        return {'error': 'Search term missing.'}, 401
 
     else:
 
         return jsonify(error=True, msg='No access token provided. Retrieve token using the listed URL.',
-                       url=url_for('spotify_blueprint.authorization'))
+                       url=url_for('spotify_blueprint.authorization')), 401
 
 
 @spotify_blueprint.route('/users/recommended', methods=['POST'])
@@ -94,16 +103,16 @@ def recommended():
 
         merlin_api_handler = MerlinAPIHandler(spotify_api_handler)
 
-        return merlin_api_handler.curated_playlist(request.args['search_term'])
+        return merlin_api_handler.curated_playlist(request.args['search_term']), 200
 
     elif 'search_term' not in request.args:
 
-        return {'error': 'Search term missing.'}
+        return {'error': 'Search term missing.'}, 401
 
     else:
 
         return jsonify(error=True, msg='No access token provided. Retrieve token using the listed URL.',
-                       url=url_for('spotify_blueprint.authorization'))
+                       url=url_for('spotify_blueprint.authorization')), 401
 
 
 @spotify_blueprint.route('/users/playlists', methods=['POST'])
@@ -118,18 +127,18 @@ def playlists():
         if 'id' in playlist and 'uris' in request.form:
 
             return spotify_api_handler.add_items_to_playlist(request.form['access_token'], playlist['id'],
-                                                             request.form['uris'])
+                                                             request.form['uris']), 201
 
-        return playlist
+        return playlist, 201
 
     elif 'name' not in request.form:
 
-        return {'error': 'Playlist name missing.'}
+        return {'error': 'Playlist name missing.'}, 401
 
     else:
 
         return jsonify(error=True, msg='No access token provided. Retrieve token using the listed URL.',
-                       url=url_for('spotify_blueprint.authorization'))
+                       url=url_for('spotify_blueprint.authorization')), 401
 
 
 @spotify_blueprint.route('/users/playlists/<playlist_id>', methods=['POST'])
@@ -139,14 +148,14 @@ def add_items_to_playlist(playlist_id):
 
         spotify_api_handler = SpotifyAPIHandler(request.form['access_token'])
 
-        return spotify_api_handler.add_items_to_playlist(playlist_id, request.json['uris'])
+        return spotify_api_handler.add_items_to_playlist(playlist_id, request.json['uris']), 201
 
     elif 'uris' not in request.json:
 
-        return {'error': 'Uris missing.'}
+        return {'error': 'Uris missing.'}, 401
 
     else:
 
         return jsonify(error=True, msg='No access token provided. Retrieve token using the listed URL.',
-                       url=url_for('spotify_blueprint.authorization'))
+                       url=url_for('spotify_blueprint.authorization')), 401
 
