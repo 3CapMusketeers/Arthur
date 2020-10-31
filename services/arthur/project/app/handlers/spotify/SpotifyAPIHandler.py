@@ -1,6 +1,5 @@
 from flask import jsonify
 
-from project.app.handlers.MerlinAPIHandler import MerlinAPIHandler
 from project.app.handlers.spotify.SpotifyAPI import SpotifyAPI
 
 
@@ -12,23 +11,11 @@ class SpotifyAPIHandler:
 
     def add_items_to_playlist(self, playlist_id, uris):
 
-        is_user_authenticated = self.spotify_api.is_authenticated()
-
-        if is_user_authenticated is True:
-
-            return self.spotify_api.add_items_to_playlist(playlist_id, uris)
-
-        return is_user_authenticated
+        return self.spotify_api.add_items_to_playlist(playlist_id, uris)
 
     def create_playlist(self, name):
 
-        is_user_authenticated = self.spotify_api.is_authenticated()
-
-        if is_user_authenticated is True:
-
-            return self.spotify_api.create_playlist(name)
-
-        return is_user_authenticated
+        return self.spotify_api.create_playlist(name)
 
     def get_several_tracks(self, ids):
 
@@ -53,6 +40,10 @@ class SpotifyAPIHandler:
 
         return tracks
 
+    def get_user_profile(self):
+
+        return self.spotify_api.get_user_profile()
+
     def get_user_saved_tracks(self):
 
         saved_tracks = []
@@ -68,6 +59,8 @@ class SpotifyAPIHandler:
             if 'items' in request:
 
                 saved_tracks += request['items']
+
+                break
 
                 if 'next' in request and request['next'] is not None:
 
@@ -114,4 +107,8 @@ class SpotifyAPIHandler:
                     tracks.append(item['track'])
 
         return tracks
+
+    def is_authenticated(self):
+
+        return self.spotify_api.is_authenticated()
 

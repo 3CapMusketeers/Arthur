@@ -4,15 +4,15 @@ from project.app.handlers.MerlinAPI import MerlinAPI
 
 class MerlinAPIHandler:
 
-    def __init__(self, spotify_api):
+    def __init__(self, spotify_api_handler):
 
-        self.merlin_api = MerlinAPI()
+        self.merlin_api = MerlinAPI(spotify_api_handler.get_user_profile()['id'])
 
-        self.spotify_api = spotify_api
+        self.spotify_api_handler = spotify_api_handler
 
     def create_model(self):
 
-        saved_tracks = self.spotify_api.get_user_saved_tracks()
+        saved_tracks = self.spotify_api_handler.get_user_saved_tracks()
 
         tracks = []
 
@@ -22,7 +22,7 @@ class MerlinAPIHandler:
 
                 tracks.append({'id': track['track']['id'], 'url': track['track']['preview_url']})
 
-        result = self.merlin_api.create_model(saved_tracks)
+        result = self.merlin_api.create_model(tracks)
 
         return 'msg' in result and result['msg'] == 'ok'
 
@@ -36,7 +36,7 @@ class MerlinAPIHandler:
 
     def classify_tracks(self, search_term):
 
-        saved_tracks = self.spotify_api.get_user_saved_tracks()
+        saved_tracks = self.spotify_api_handler.get_user_saved_tracks()
 
         classify_tracks = []
 
@@ -46,13 +46,13 @@ class MerlinAPIHandler:
 
                 classify_tracks.append({'id': track['track']['id'], 'url': track['track']['preview_url']})
 
-        playlists = self.spotify_api.search_playlist(search_term, limit=5)
+        playlists = self.spotify_api_handler.search_playlist(search_term, limit=5)
 
         playlist_tracks = []
 
         for playlist in playlists:
 
-            playlist_tracks += self.spotify_api.get_tracks_from_playlist(playlist['id'])
+            playlist_tracks += self.spotify_api_handler.get_tracks_from_playlist(playlist['id'])
 
         training_tracks = []
 
@@ -72,7 +72,7 @@ class MerlinAPIHandler:
 
         if 'tracks' in response_tracks:
 
-            tracks = self.spotify_api.get_several_tracks(response_tracks['tracks'])
+            tracks = self.spotify_api_handler.get_several_tracks(response_tracks['tracks'])
 
             for track in tracks:
 
@@ -92,13 +92,13 @@ class MerlinAPIHandler:
 
         playlist_tracks = []
 
-        playlists = self.spotify_api.search_playlist(search_term)
+        playlists = self.spotify_api_handler.search_playlist(search_term)
 
         for playlist in playlists:
 
             if 'id' in playlist:
 
-                playlist_tracks += self.spotify_api.get_tracks_from_playlist(playlist['id'])
+                playlist_tracks += self.spotify_api_handler.get_tracks_from_playlist(playlist['id'])
 
         tracks = []
 
@@ -118,7 +118,7 @@ class MerlinAPIHandler:
 
         if 'tracks' in response_tracks:
 
-            tracks = self.spotify_api.get_several_tracks(response_tracks['tracks'])
+            tracks = self.spotify_api_handler.get_several_tracks(response_tracks['tracks'])
 
             for track in tracks:
 

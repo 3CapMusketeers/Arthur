@@ -82,7 +82,7 @@ class SpotifyAPI:
 
         url = self.BASE_URL + '/me'
 
-        header = {'Authorization': 'Bearer ' + self.access_token if self.access_token is not None else ''}
+        header = {'Authorization': 'Bearer ' + self.access_token}
 
         request = requests.get(url, headers=header).json()
 
@@ -180,7 +180,7 @@ class SpotifyAPI:
 
             if 'error' in user and 'message' in user['error']:
 
-                return user
+                return user['error']
 
             else:
 
