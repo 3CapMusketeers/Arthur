@@ -46,7 +46,7 @@ def index():
         # db_handler = DBHandler()
         # DBHandler().insert_user(user)
 
-        return jsonify(user=user['display_name']), 200
+        return jsonify(user=user['display_name']), 200 if merlin_api_handler.check_model(user['id']) else 202
 
     else:
 
