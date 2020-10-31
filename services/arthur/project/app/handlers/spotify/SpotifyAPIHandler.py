@@ -60,8 +60,6 @@ class SpotifyAPIHandler:
 
                 saved_tracks += request['items']
 
-                break
-
                 if 'next' in request and request['next'] is not None:
 
                     url = request['next']
