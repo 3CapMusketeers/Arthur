@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2020-10-16T18:02:36Z"
+  labels:
+    app: merlin
+  name: merlin
+  namespace: default
+  resourceVersion: "7279735"
+  selfLink: /api/v1/namespaces/default/services/merlin
+  uid: 004101f1-901c-43df-9b72-fccedc963c24
+spec:
+  clusterIP: 10.4.0.44
+  ports:
+  - port: 5005
+    protocol: TCP
+    targetPort: 5005
+  selector:
+    app: merlin
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+--- #loadbalancer
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2020-10-16T19:29:04Z"
+  labels:
+    app: merlin
+  name: merlin-22rjp
+  namespace: default
+  resourceVersion: "7280262"
+  selfLink: /api/v1/namespaces/default/services/merlin-22rjp
+  uid: 0012a079-3893-49ba-8c91-9aa6b655904f
+spec:
+  clusterIP: 10.4.15.92
+  externalTrafficPolicy: Cluster
+  ports:
+  - nodePort: 30636
+    port: 80
+    protocol: TCP
+    targetPort: 5005
+  selector:
+    app: merlin
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - ip: 35.190.157.147

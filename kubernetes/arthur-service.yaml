@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.21.0 ()
+  creationTimestamp: "2020-10-16T16:09:48Z"
+  labels:
+    io.kompose.service: arthur
+  name: arthur
+  namespace: default
+  resourceVersion: "3882297"
+  selfLink: /api/v1/namespaces/default/services/arthur
+  uid: 3d090138-34bd-4a62-827c-336e9f4f4420
+spec:
+  clusterIP: 10.4.1.184
+  ports:
+  - name: "5000"
+    port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    io.kompose.service: arthur
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+--- #Load balancer
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2020-10-16T16:56:26Z"
+  finalizers:
+    - service.kubernetes.io/load-balancer-cleanup
+  generateName: arthur-
+  labels:
+    io.kompose.service: arthur
+  name: arthur-q92qb
+  namespace: default
+  resourceVersion: "3929405"
+  selfLink: /api/v1/namespaces/default/services/arthur-q92qb
+  uid: f3f2867d-55ba-4712-8c64-526a1500d775
+spec:
+  clusterIP: 10.4.1.105
+  externalTrafficPolicy: Cluster
+  ports:
+    - nodePort: 30165
+      port: 5000
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    io.kompose.service: arthur
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+      - ip: 35.196.118.75
+
