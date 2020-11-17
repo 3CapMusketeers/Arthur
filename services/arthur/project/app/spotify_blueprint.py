@@ -30,23 +30,29 @@ def index():
 
         merlin_api_handler = MerlinAPIHandler(spotify_api_handler)
 
+        user = spotify_api_handler.get_user_profile()
+
+        modelCheck = merlin_api_handler.check_model(user['id'])
+
+        print(modelCheck)
+
         def create_model():
 
             merlin_api_handler.create_model()
 
             # Do something here (e.g update database)
 
-        thread = threading.Thread(target=create_model)
+        if not modelCheck:
 
-        thread.start()
+            thread = threading.Thread(target=create_model)
 
-        user = spotify_api_handler.get_user_profile()
+            thread.start()
 
         # TODO: FIX THIS
         # db_handler = DBHandler()
         # DBHandler().insert_user(user)
 
-        return jsonify(user=user['display_name']), 200 if merlin_api_handler.check_model(user['id']) else 202
+        return jsonify(user=user['display_name']), 200 if modelCheck else 202
 
     else:
 
