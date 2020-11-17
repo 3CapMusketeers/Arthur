@@ -34,8 +34,6 @@ def index():
 
         modelCheck = merlin_api_handler.check_model(user['id'])
 
-        print(modelCheck)
-
         def create_model():
 
             merlin_api_handler.create_model()
