@@ -19,13 +19,21 @@
           </div>
           <div v-else class="form-group col-8">
             <input v-model="searchTerm" class="form-control google-search" />
-            <div class="btn-group ">
+            <div class="btn-group" v-if="modelExists">
               <b-button variant="primary" @click="createPlaylist()"
                 >Create Playlist</b-button
               >
               <b-button variant="primary" @click="getDiscover()"
                 >Discover</b-button
               >
+            </div>
+            <div v-else class="col">
+              <h5 class="btn-group text-muted">
+                Please wait while we are creating your model
+              </h5>
+              {{interval}}
+              <b-button variant="link" @click="checkModel">Force Refresh</b-button>
+              <b-button variant="link" @click="stopTimer">Stop Timer</b-button>
             </div>
           </div>
         </div>
@@ -41,7 +49,7 @@ import SpotifyDataService from "@/services/SpotifyDataService";
 @Component({
   components: {},
   computed: {
-    isAuth () {
+    isAuth() {
       return this.$store.getters.authenticated;
     },
     token() {
@@ -52,13 +60,46 @@ import SpotifyDataService from "@/services/SpotifyDataService";
 export default class Home extends Vue {
   searchTerm = "";
   loading = false;
+  modelExists = false;
+  interval = 0;
 
+  countDownTimer() {
+    if(this.interval> 0) {
+      setTimeout(() => {
+        this.interval -= 1;
+        this.countDownTimer();
+      }, 1000);
+    } else {
+      const model = this.checkModel();
+      if(!model) {
+        this.interval = 180;
+        this.countDownTimer();
+      } else {
+        this.modelExists = true;
+      }
+    }
+  }
+
+  stopTimer() {
+    this.interval = 0;
+  }
+  mounted() {
+    // this.countDownTimer();
+  }
+  checkModel() {
+    SpotifyDataService.checkModelCreated(this.token).then(d => {
+      console.log(d);
+      if(d.status==202) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+  }
   createPlaylist() {
     this.loading = true;
-    SpotifyDataService.createPlaylist(
-      this.searchTerm,
-      this.token
-    )
+    // eslint-disable-next-line
+    SpotifyDataService.createPlaylist(this.searchTerm, this.token)
       .then(d => {
         this.$store.commit("changeTracks", d.data.tracks);
         console.log(d);
@@ -69,10 +110,8 @@ export default class Home extends Vue {
 
   getDiscover() {
     this.loading = true;
-    SpotifyDataService.createPlaylist(
-      this.searchTerm,
-      this.token
-    )
+    // eslint-disable-next-line
+    SpotifyDataService.createPlaylist(this.searchTerm, this.token)
       .then(d => {
         this.$store.commit("changeTracks", d.data.tracks);
         console.log(d);
