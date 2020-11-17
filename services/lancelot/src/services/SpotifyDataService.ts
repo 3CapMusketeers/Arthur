@@ -14,14 +14,14 @@ class SpotifyDataService {
     return this.authEndpoint + "?client_id=" + this.clientId + "&redirect_uri=" + spotifyCallback + "&scope=" + this.scopes.join('%20') + "&response_type=token&show_dialog=true";
   }
 
-  login(token: string) {
-    let actualToken = localStorage.setItem('spotify_token', token);
-    return actualToken;
-  }
+  // login(token: string) {
+  //   let actualToken = localStorage.setItem('spotify_token', token);
+  //   return actualToken;
+  // }
 
   savePlaylist(name: string, tracks: any) {
     const fd = new FormData();
-    fd.append('access_token', this.getToken());
+    fd.append('access_token', this.$store.userToken());
     fd.append('name', name);
     fd.append('uris', tracks)
     return http.post(`/users/playlists`, fd);
@@ -29,48 +29,43 @@ class SpotifyDataService {
 
   createPlaylist(term: string) {
     const fd = new FormData();
-    fd.append('access_token', this.getToken());
+    fd.append('access_token', this.$store.userToken());
 
     return http.post(`/users/saved-tracks?search_term=${term}`, fd);
   }
 
   discover(term: string) {
     const fd = new FormData();
-    fd.append('access_token', this.getToken());
+    fd.append('access_token', this.$store.userToken());
     return http.post(`/users/recommended?search_term=${term}`, fd);
   }
 
-  isLoggedIn() {
-    return (this.getToken() != null && this.getUsername() != null)
-  }
+  // isLoggedIn() {
+  //   return (this.getToken() != null && this.getUsername() != null)
+  // }
 
-  getUsername():string {
-    return <string>localStorage.getItem('username');
-  }
+  // getUsername():string {
+  //   return <string>localStorage.getItem('username');
+  // }
 
-  getToken(): string {
-    return <string>localStorage.getItem('spotify_token');
-  }
+  // getToken(): string {
+  //   return <string>localStorage.getItem('spotify_token');
+  // }
 
-  setUsername(token: string): boolean {
+  getUsername(token: string): string {
     const fd = new FormData();
-    let res = false;
+    let res = "";
     fd.append('access_token', token)
     http.post(`/`, fd).then(data => {
-      if('error' in data.data && data.data.error) {
-        res = false;
-      } else {
-        localStorage.setItem('username', data.data.user);
-        res = true;
-      }
+        res = data.data.user;
     });
     return res;
   }
 
-  logout() {
-    localStorage.removeItem('username');
-    localStorage.removeItem('spotify_token');
-  }
+  // logout() {
+  //   localStorage.removeItem('username');
+  //   localStorage.removeItem('spotify_token');
+  // }
 
 }
 

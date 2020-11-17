@@ -13,9 +13,13 @@
 import {Component, Vue} from "vue-property-decorator";
 import SpotifyDataService from "@/services/SpotifyDataService";
 import router from "@/router";
+import {mapMutations} from "vuex";
 
 @Component({
-  components: {}
+  components: {},
+  methods: {
+    ...mapMutations(['login'])
+  },
 })
 export default class Login extends Vue {
   url: string;
@@ -24,8 +28,13 @@ export default class Login extends Vue {
     const url = this.$route.hash.slice(1);
     const parsed = this.parse_query_string(url);
     if (parsed.has('access_token')) {
-      SpotifyDataService.login(parsed.get("access_token"));
-      SpotifyDataService.setUsername(parsed.get("access_token"));
+      const user = {
+        username: SpotifyDataService.getUsername(parsed.get("access_token")),
+        token: parsed.get("access_token")
+    }
+      this.login({username: user.username, token: user.token});
+      // SpotifyDataService.login(parsed.get("access_token"));
+      // SpotifyDataService.setUsername(parsed.get("access_token"));
       router.push('/');
     }
 }
