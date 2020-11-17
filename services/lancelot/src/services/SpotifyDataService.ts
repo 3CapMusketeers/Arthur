@@ -46,18 +46,11 @@ class SpotifyDataService {
     return http.post(`/users/recommended?search_term=${term}`, fd);
   }
 
-  // isLoggedIn() {
-  //   return (this.getToken() != null && this.getUsername() != null)
-  // }
-
-  // getUsername():string {
-  //   return <string>localStorage.getItem('username');
-  // }
-
-  // getToken(): string {
-  //   return <string>localStorage.getItem('spotify_token');
-  // }
-
+  checkModelCreated(token: string) {
+    const fd = new FormData();
+    fd.append("access_token", token);
+    return http.post(`/`, fd);
+  }
   async getUsername(token: string) {
     const fd = new FormData();
     fd.append("access_token", token);
