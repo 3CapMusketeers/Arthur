@@ -6,20 +6,28 @@
           Camelot
         </h2>
         <div class="row google-form text-center d-flex justify-content-center">
-            <div v-if="loading" class="col">
-              <div>
-              <b-spinner style="width: 4rem; height: 4rem;" class="mt-5 mb-4" label="Large Spinner"></b-spinner>
-                </div>
-              <h5>Generating a great playlist!</h5>
-              <small class="text-muted">(Get some snacks while you wait)</small>
+          <div v-if="loading" class="col">
+            <div>
+              <b-spinner
+                style="width: 4rem; height: 4rem;"
+                class="mt-5 mb-4"
+                label="Large Spinner"
+              ></b-spinner>
             </div>
-            <div v-else class="form-group col-8">
-              <input v-model="searchTerm" class="form-control google-search" >
-              <div class="btn-group ">
-                <b-button variant="primary" @click="createPlaylist()">Create Playlist</b-button>
-                <b-button variant="primary" @click="getDiscover()">Discover</b-button>
-              </div>
+            <h5>Generating a great playlist!</h5>
+            <small class="text-muted">(Get some snacks while you wait)</small>
+          </div>
+          <div v-else class="form-group col-8">
+            <input v-model="searchTerm" class="form-control google-search" />
+            <div class="btn-group ">
+              <b-button variant="primary" @click="createPlaylist()"
+                >Create Playlist</b-button
+              >
+              <b-button variant="primary" @click="getDiscover()"
+                >Discover</b-button
+              >
             </div>
+          </div>
         </div>
       </div>
     </div>
@@ -27,11 +35,19 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import SpotifyDataService from "@/services/SpotifyDataService";
 
 @Component({
-  components: {}
+  components: {},
+  computed: {
+    isAuth () {
+      return this.$store.getters.authenticated;
+    },
+    token() {
+      return this.$store.getters.userToken;
+    }
+  }
 })
 export default class Home extends Vue {
   searchTerm = "";
@@ -39,22 +55,31 @@ export default class Home extends Vue {
 
   createPlaylist() {
     this.loading = true;
-    SpotifyDataService.createPlaylist(this.searchTerm).then(d => {
-      this.$store.commit('changeTracks', d.data.tracks);
-      console.log(d)
-      this.$router.push({name: 'Playlist'});
-    }).finally(() => (this.loading = false));
-}
+    SpotifyDataService.createPlaylist(
+      this.searchTerm,
+      this.token
+    )
+      .then(d => {
+        this.$store.commit("changeTracks", d.data.tracks);
+        console.log(d);
+        this.$router.push({ name: "Playlist" });
+      })
+      .finally(() => (this.loading = false));
+  }
 
   getDiscover() {
     this.loading = true;
-    SpotifyDataService.createPlaylist(this.searchTerm).then(d => {
-      this.$store.commit('changeTracks', d.data.tracks);
-      console.log(d)
-      this.$router.push({name: 'Playlist'});
-    }).finally(() => (this.loading = false));
+    SpotifyDataService.createPlaylist(
+      this.searchTerm,
+      this.token
+    )
+      .then(d => {
+        this.$store.commit("changeTracks", d.data.tracks);
+        console.log(d);
+        this.$router.push({ name: "Playlist" });
+      })
+      .finally(() => (this.loading = false));
   }
-
 
   // private tutorial: any = {
   //   id: null,
@@ -115,6 +140,4 @@ export default class Home extends Vue {
   border-radius: 0;
   margin: 0 10px;
 }
-
-
 </style>

@@ -12,32 +12,29 @@
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
 import SpotifyDataService from "@/services/SpotifyDataService";
-import router from "@/router";
-import {mapMutations} from "vuex";
 
 @Component({
-  components: {},
-  methods: {
-    ...mapMutations(['login'])
-  },
+  components: {}
 })
 export default class Login extends Vue {
   url: string;
 
-  mounted() {
+  async mounted() {
     const url = this.$route.hash.slice(1);
     const parsed = this.parse_query_string(url);
     if (parsed.has('access_token')) {
+      const username = await SpotifyDataService.getUsername(parsed.get("access_token"));
       const user = {
-        username: SpotifyDataService.getUsername(parsed.get("access_token")),
+        username: username,
         token: parsed.get("access_token")
-    }
-      this.login({username: user.username, token: user.token});
+      }
+
+      this.$store.commit('login', {username: user.username, token: user.token})
       // SpotifyDataService.login(parsed.get("access_token"));
       // SpotifyDataService.setUsername(parsed.get("access_token"));
-      router.push('/');
+      // router.push('/');
     }
-}
+  }
   constructor() {
     super();
     var path = this.$router.resolve({name: 'Login'}).href

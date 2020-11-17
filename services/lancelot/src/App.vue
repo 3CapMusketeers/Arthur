@@ -4,9 +4,8 @@
       <b-navbar toggleable="lg" type="dark" variant="primary">
         <b-navbar-brand href="/">Camelot</b-navbar-brand>
         <b-navbar-nav>
-        <span v-if="$store.isAuth" class="row">
-          test
-          <b-nav-item href="#">{{ $store.user.username }}</b-nav-item>
+        <span v-if="isAuth" class="row">
+          <b-nav-item href="#">{{ username }}</b-nav-item>
           <b-nav-item href="#" :to="{ name: 'Playlist' }">Playlist</b-nav-item>
           <b-nav-item href="#" @click="logout()">Logout</b-nav-item>
         </span>
@@ -32,30 +31,21 @@
 </template>
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import SpotifyDataService from "@/services/SpotifyDataService";
 
 @Component({
   components: {},
+  computed: {
+    isAuth () {
+      return this.$store.getters.authenticated;
+    },
+    username () {
+      return this.$store.getters.username;
+    }
+  }
 })
 export default class Login extends Vue {
-  username: string = "";
-  isLoggedIn: boolean = false;
-
-  mounted() {
-    this.username = this.$store.getters.username;
-    this.isLoggedIn = this.$store.getters.isAuth;
-    // if (SpotifyDataService.isLoggedIn()) {
-    //   this.isLoggedIn = true;
-    //   this.username = SpotifyDataService.getUsername();
-    // } else {
-    //   this.isLoggedIn = false;
-    // }
-    // this.isLoggedIn = SpotifyDataService.isLoggedIn();
-  }
-
   logout() {
-    // this.isLoggedIn = false;
-    SpotifyDataService.logout();
+    this.$store.commit('logout');
   }
 }
 </script>

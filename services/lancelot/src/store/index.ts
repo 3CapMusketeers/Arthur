@@ -25,7 +25,10 @@ export default new Vuex.Store({
       return state.user.token;
     },
     username: state => {
-      return state.user.username
+      return state.user.username;
+    },
+    authenticated: state => {
+      return state.user.isAuth;
     }
   },
   mutations: {
@@ -33,12 +36,12 @@ export default new Vuex.Store({
       state.tracks = payload;
     },
     login(state, payload) {
-      state.isAuth = true;
+      state.user.isAuth = true;
       state.user.username = payload.username;
       state.user.token = payload.token;
     },
     logout(state) {
-      state.isAuth = false;
+      state.user.isAuth = false;
       state.user.username = "";
       state.user.token = "";
     }
