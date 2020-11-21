@@ -46,10 +46,9 @@ class SpotifyDataService {
     return http.post(`/users/recommended?search_term=${term}`, fd);
   }
 
-  checkModelCreated(token: string, create: boolean) {
+  checkModelCreated(token: string) {
     const fd = new FormData();
     fd.append("access_token", token);
-    fd.append("create", create);
     return http.post(`/`, fd);
   }
   async getUsername(token: string) {
@@ -61,6 +60,7 @@ class SpotifyDataService {
       console.log(response.data.user);
       return response.data.user;
     } catch (error) {
+      this.$store.commit('logout');
       console.log(error);
       return "";
     }

@@ -38,12 +38,6 @@ def index():
 
             merlin_api_handler.create_model()
 
-        def fcreate_model():
-            print("called model")
-            time.sleep(500)
-
-            # Do something here (e.g update database)
-
         exists = False  
         for thread in threading.enumerate(): 
             if thread.name == user['id']:
@@ -217,7 +211,7 @@ def get_model_status_code(model_status):
     if model_status == -1:
         return 204 # Not Found
     elif model_status == 0:
-        return 202  # Accepted
+        return 202 # Accepted
     elif model_status == 1:
         return 200  # Created
     else:
