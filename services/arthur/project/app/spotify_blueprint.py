@@ -1,8 +1,8 @@
 import os
+import time
 import threading
 # Package Imports
 from flask import Blueprint, redirect, request, url_for, jsonify
-
 # Project imports
 from project.app.handlers import DBHandler
 from project.app.handlers.MerlinAPIHandler import MerlinAPIHandler
@@ -13,7 +13,6 @@ from project.app.models import User
 from project import db
 
 spotify_blueprint = Blueprint('spotify_blueprint', __name__)
-
 
 @spotify_blueprint.route('/', methods=['POST'])
 def index():
@@ -32,25 +31,35 @@ def index():
 
         user = spotify_api_handler.get_user_profile()
 
-        modelCheck = merlin_api_handler.check_model(user['id'])
+        model_status = merlin_api_handler.check_model(user['id'])
+        status_code = get_model_status_code(model_status)
 
         def create_model():
 
             merlin_api_handler.create_model()
 
+        def fcreate_model():
+            print("called model")
+            time.sleep(500)
+
             # Do something here (e.g update database)
 
-        if not modelCheck:
+        exists = False  
+        for thread in threading.enumerate(): 
+            if thread.name == user['id']:
+                status_code = 202
 
-            thread = threading.Thread(target=create_model)
-
+        thread = threading.Thread(target=create_model)
+        if status_code == 204:
+            print("I woudl create here")
+            thread.name = user['id'] 
             thread.start()
 
         # TODO: FIX THIS
         # db_handler = DBHandler()
         # DBHandler().insert_user(user)
 
-        return jsonify(user=user['display_name']), 200 if modelCheck else 202
+        return jsonify(user=user['display_name'], model_status=model_status), status_code
 
     else:
 
@@ -174,4 +183,44 @@ def add_items_to_playlist(playlist_id):
 
         return jsonify(error=True, msg='No access token provided. Retrieve token using the listed URL.',
                        url=url_for('spotify_blueprint.authorization')), 401
+
+
+@spotify_blueprint.route('/users/model', methods=['POST'])
+def check_personal_model():
+
+    if 'access_token' in request.form:
+
+        spotify_api_handler = SpotifyAPIHandler(request.form['access_token'])
+
+        is_authenticated = spotify_api_handler.is_authenticated()
+
+        if is_authenticated != True:
+            return jsonify(error=True, msg=is_authenticated), 401
+
+        merlin_api_handler = MerlinAPIHandler(spotify_api_handler)
+
+        user = spotify_api_handler.get_user_profile()
+
+        model_status = merlin_api_handler.check_model(user['id'])
+
+        status_code = get_model_status_code(model_status)
+
+        return jsonify(status=model_status), status_code
+
+    else:
+
+        return jsonify(error=True, msg='No access token provided. Retrieve token using the listed URL.',
+                       url=url_for('spotify_blueprint.authorization')), 401
+
+
+def get_model_status_code(model_status):
+    if model_status == -1:
+        return 204 # Not Found
+    elif model_status == 0:
+        return 202  # Accepted
+    elif model_status == 1:
+        return 200  # Created
+    else:
+        return 400  # Bad Request :(
+
 

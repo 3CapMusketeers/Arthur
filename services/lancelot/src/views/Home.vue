@@ -61,7 +61,8 @@ export default class Home extends Vue {
   searchTerm = "";
   loading = false;
   modelExists = false;
-  interval = 0;
+  interval = 180;
+  sentCreateRequest = false; 
 
   countDownTimer() {
     if(this.interval> 0) {
@@ -84,14 +85,15 @@ export default class Home extends Vue {
     this.interval = 0;
   }
   mounted() {
-    // this.countDownTimer();
+    this.countDownTimer();
   }
   checkModel() {
-    SpotifyDataService.checkModelCreated(this.token).then(d => {
-      console.log(d);
-      if(d.status==202) {
+    SpotifyDataService.checkModelCreated(this.token, this.sentCreateRequest).then(d => {
+      this.sentCreateRequest = true; 
+      if(d.status==204) {
         return false;
       } else {
+        this.sentCreateRequest = false; 
         return true;
       }
     });
