@@ -46,7 +46,11 @@ def index():
         # db_handler = DBHandler()
         # DBHandler().insert_user(user)
 
-        return jsonify(user=user['display_name']), 200 if merlin_api_handler.check_model(user['id']) else 202
+        model_status = merlin_api_handler.check_model(user['id'])
+
+        status_code = get_model_status_code(model_status)
+
+        return jsonify(user=user['display_name'], model_status=model_status), status_code
 
     else:
 
@@ -170,4 +174,45 @@ def add_items_to_playlist(playlist_id):
 
         return jsonify(error=True, msg='No access token provided. Retrieve token using the listed URL.',
                        url=url_for('spotify_blueprint.authorization')), 401
+
+
+@spotify_blueprint.route('/users/model', methods=['POST'])
+def check_personal_model():
+
+    if 'access_token' in request.form:
+
+        spotify_api_handler = SpotifyAPIHandler(request.form['access_token'])
+
+        is_authenticated = spotify_api_handler.is_authenticated()
+
+        if is_authenticated != True:
+            return jsonify(error=True, msg=is_authenticated), 401
+
+        merlin_api_handler = MerlinAPIHandler(spotify_api_handler)
+
+        user = spotify_api_handler.get_user_profile()
+
+        model_status = merlin_api_handler.check_model(user['id'])
+
+        status_code = get_model_status_code(model_status)
+
+        return jsonify(status=model_status), status_code
+
+    else:
+
+        return jsonify(error=True, msg='No access token provided. Retrieve token using the listed URL.',
+                       url=url_for('spotify_blueprint.authorization')), 401
+
+
+def get_model_status_code(model_status):
+
+    if model_status == -1:
+        return 404  # Not Found
+    elif model_status == 0:
+        return 202  # Accepted
+    elif model_status == 1:
+        return 201  # Created
+    else:
+        return 400  # Bad Request :(
+
 
