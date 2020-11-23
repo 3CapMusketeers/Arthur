@@ -32,7 +32,7 @@ export default class Login extends Vue {
       this.$store.commit('login', {username: user.username, token: user.token})
       // SpotifyDataService.login(parsed.get("access_token"));
       // SpotifyDataService.setUsername(parsed.get("access_token"));
-      // router.push('/');
+      this.$router.push('/');
     }
   }
   constructor() {
