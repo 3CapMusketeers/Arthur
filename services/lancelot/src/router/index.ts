@@ -48,16 +48,16 @@ const router = new VueRouter({
 
 export default router;
 
-router.beforeEach((to, from, next) => {
-  const publicPages = ['/spotifyCallback', '/', '/login', ];
-  const authRequired = !publicPages.includes(to.path);
-  const loggedIn = localStorage.getItem('spotify_token');
-
-  // trying to access a restricted page + not logged in
-  // redirect to login page
-  if (authRequired && !loggedIn) {
-    next('/login');
-  } else {
-    next();
-  }
-});
+// router.beforeEach((to, from, next) => {
+//   const publicPages = ['/spotifyCallback', '/', '/login', ];
+//   const authRequired = !publicPages.includes(to.path);
+//   const loggedIn = localStorage.getItem('spotify_token');
+//
+//   // trying to access a restricted page + not logged in
+//   // redirect to login page
+//   if (authRequired && !loggedIn) {
+//     next('/login');
+//   } else {
+//     next();
+//   }
+// });

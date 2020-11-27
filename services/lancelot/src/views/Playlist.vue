@@ -56,7 +56,7 @@ export default class Playlist extends Vue {
  }
 
  savePlaylist() {
-  SpotifyDataService.savePlaylist('TEST', this.tracks).then(d =>{
+  SpotifyDataService.savePlaylist('TEST', this.tracks, this.$store.getters.userToken).then(d =>{
     console.log(d);
   });
  }

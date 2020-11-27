@@ -1,8 +1,8 @@
 import os
+import time
 import threading
 # Package Imports
 from flask import Blueprint, redirect, request, url_for, jsonify
-
 # Project imports
 from project.app.handlers import DBHandler
 from project.app.handlers.MerlinAPIHandler import MerlinAPIHandler
@@ -13,7 +13,6 @@ from project.app.models import User
 from project import db
 
 spotify_blueprint = Blueprint('spotify_blueprint', __name__)
-
 
 @spotify_blueprint.route('/', methods=['POST'])
 def index():
@@ -30,25 +29,29 @@ def index():
 
         merlin_api_handler = MerlinAPIHandler(spotify_api_handler)
 
+        user = spotify_api_handler.get_user_profile()
+
+        model_status = merlin_api_handler.check_model(user['id'])
+        status_code = get_model_status_code(model_status)
+
         def create_model():
 
             merlin_api_handler.create_model()
 
-            # Do something here (e.g update database)
+        exists = False  
+        for thread in threading.enumerate(): 
+            if thread.name == user['id']:
+                status_code = 202
 
         thread = threading.Thread(target=create_model)
-
-        thread.start()
-
-        user = spotify_api_handler.get_user_profile()
+        if status_code == 204:
+            print("I woudl create here")
+            thread.name = user['id'] 
+            thread.start()
 
         # TODO: FIX THIS
         # db_handler = DBHandler()
         # DBHandler().insert_user(user)
-
-        model_status = merlin_api_handler.check_model(user['id'])
-
-        status_code = get_model_status_code(model_status)
 
         return jsonify(user=user['display_name'], model_status=model_status), status_code
 
@@ -205,13 +208,12 @@ def check_personal_model():
 
 
 def get_model_status_code(model_status):
-
     if model_status == -1:
-        return 404  # Not Found
+        return 204 # Not Found
     elif model_status == 0:
-        return 202  # Accepted
+        return 202 # Accepted
     elif model_status == 1:
-        return 201  # Created
+        return 200  # Created
     else:
         return 400  # Bad Request :(
 

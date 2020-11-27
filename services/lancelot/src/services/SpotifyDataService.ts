@@ -3,75 +3,73 @@ import router from "@/router";
 
 class SpotifyDataService {
   clientId = "369a6c4b828e4dda98c6a47e891d5b2f";
-  scopes = [
-    'user-read-private',
-    'user-library-read'
-  ];
+  scopes = ["user-read-private", "user-library-read"];
   // redirectUri = "http://localhost:8080/login"; //Use route for this to get current url
-  authEndpoint = 'https://accounts.spotify.com/authorize';
+  authEndpoint = "https://accounts.spotify.com/authorize";
 
   getSpotifyURL(spotifyCallback: string) {
-    return this.authEndpoint + "?client_id=" + this.clientId + "&redirect_uri=" + spotifyCallback + "&scope=" + this.scopes.join('%20') + "&response_type=token&show_dialog=true";
+    return (
+      this.authEndpoint +
+      "?client_id=" +
+      this.clientId +
+      "&redirect_uri=" +
+      spotifyCallback +
+      "&scope=" +
+      this.scopes.join("%20") +
+      "&response_type=token&show_dialog=true"
+    );
   }
 
-  login(token: string) {
-    let actualToken = localStorage.setItem('spotify_token', token);
-    return actualToken;
-  }
+  // login(token: string) {
+  //   let actualToken = localStorage.setItem('spotify_token', token);
+  //   return actualToken;
+  // }
 
-  savePlaylist(name: string, tracks: any) {
+  savePlaylist(name: string, tracks: any, token: string) {
     const fd = new FormData();
-    fd.append('access_token', this.getToken());
-    fd.append('name', name);
-    fd.append('uris', tracks)
+    fd.append("access_token", token);
+    fd.append("name", name);
+    fd.append("uris", tracks);
     return http.post(`/users/playlists`, fd);
   }
 
-  createPlaylist(term: string) {
+  createPlaylist(term: string, token: string) {
     const fd = new FormData();
-    fd.append('access_token', this.getToken());
+    fd.append("access_token", token);
 
     return http.post(`/users/saved-tracks?search_term=${term}`, fd);
   }
 
-  discover(term: string) {
+  discover(term: string, token: string) {
     const fd = new FormData();
-    fd.append('access_token', this.getToken());
+    fd.append("access_token", token);
     return http.post(`/users/recommended?search_term=${term}`, fd);
   }
 
-  isLoggedIn() {
-    return (this.getToken() != null && this.getUsername() != null)
-  }
-
-  getUsername():string {
-    return <string>localStorage.getItem('username');
-  }
-
-  getToken(): string {
-    return <string>localStorage.getItem('spotify_token');
-  }
-
-  setUsername(token: string): boolean {
+  checkModelCreated(token: string) {
     const fd = new FormData();
-    let res = false;
-    fd.append('access_token', token)
-    http.post(`/`, fd).then(data => {
-      if('error' in data.data && data.data.error) {
-        res = false;
-      } else {
-        localStorage.setItem('username', data.data.user);
-        res = true;
-      }
-    });
-    return res;
+    fd.append("access_token", token);
+    return http.post(`/`, fd);
+  }
+  async getUsername(token: string) {
+    const fd = new FormData();
+    fd.append("access_token", token);
+
+    try {
+      const response = await http.post(`/`, fd);
+      console.log(response.data.user);
+      return response.data.user;
+    } catch (error) {
+      this.$store.commit('logout');
+      console.log(error);
+      return "";
+    }
   }
 
-  logout() {
-    localStorage.removeItem('username');
-    localStorage.removeItem('spotify_token');
-  }
-
+  // logout() {
+  //   localStorage.removeItem('username');
+  //   localStorage.removeItem('spotify_token');
+  // }
 }
 
-export default new SpotifyDataService()
+export default new SpotifyDataService();
