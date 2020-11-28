@@ -62,7 +62,7 @@ export default class Home extends Vue {
   loading = false;
   modelExists = false;
   interval = 1;
-  sentCreateRequest = false; 
+  sentCreateRequest = false;
 
   countDownTimer() {
     if(this.interval> 0) {
@@ -89,19 +89,21 @@ export default class Home extends Vue {
     this.countDownTimer();
   }
   checkModel() {
-    let res = false; 
+    let res = false;
+    // @ts-ignore
     SpotifyDataService.checkModelCreated(this.token).then(d => {
       if(d.status==200) {
         res = true;
-        this.modelExists = true; 
-      } 
+        this.modelExists = true;
+      }
     });
-    return res; 
-   
+    return res;
+
   }
   createPlaylist() {
     this.loading = true;
     // eslint-disable-next-line
+    // @ts-ignore
     SpotifyDataService.createPlaylist(this.searchTerm, this.token)
       .then(d => {
         this.$store.commit("changeTracks", d.data.tracks);
@@ -114,6 +116,7 @@ export default class Home extends Vue {
   getDiscover() {
     this.loading = true;
     // eslint-disable-next-line
+    // @ts-ignore
     SpotifyDataService.createPlaylist(this.searchTerm, this.token)
       .then(d => {
         this.$store.commit("changeTracks", d.data.tracks);

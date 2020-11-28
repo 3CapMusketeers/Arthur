@@ -60,6 +60,7 @@ class SpotifyDataService {
       console.log(response.data.user);
       return response.data.user;
     } catch (error) {
+      // @ts-ignore
       this.$store.commit('logout');
       console.log(error);
       return "";
