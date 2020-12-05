@@ -66,7 +66,7 @@ class MerlinAPIHandler:
 
         if 'msg' in response_tracks:
 
-            return jsonify(tracks={'error': True, 'msg': response_tracks['msg']})
+            return {'error': True, 'msg': response_tracks['msg']}
 
         results = []
 
@@ -86,7 +86,7 @@ class MerlinAPIHandler:
 
                 results.append({'id': track['id'], 'name': track['name'], 'uri': track['uri'], 'artists': artists})
 
-        return jsonify(tracks=results)
+        return results
 
     def curated_playlist(self, search_term):
 
@@ -112,7 +112,7 @@ class MerlinAPIHandler:
 
         if 'msg' in response_tracks:
 
-            return jsonify(tracks={'error': True, 'msg': response_tracks['msg']})
+            return {'error': True, 'msg': response_tracks['msg']}
 
         results = []
 
@@ -131,4 +131,4 @@ class MerlinAPIHandler:
 
                 results.append({'id': track['id'], 'name': track['name'], 'uri': track['uri'], 'artists': artists})
 
-        return jsonify(tracks=results)
+        return results
