@@ -14,6 +14,7 @@ from project import db
 
 spotify_blueprint = Blueprint('spotify_blueprint', __name__)
 
+
 @spotify_blueprint.route('/', methods=['POST'])
 def index():
     start_time = time.time()
@@ -24,8 +25,7 @@ def index():
         is_authenticated = spotify_api_handler.is_authenticated()
 
         if is_authenticated != True:
-
-            return jsonify(error=True, msg=is_authenticated), 401
+            return jsonify(error=True, msg=is_authenticated, exec_time=get_execution_time(start_time)), 401
 
         merlin_api_handler = MerlinAPIHandler(spotify_api_handler)
 
@@ -35,7 +35,6 @@ def index():
         status_code = get_model_status_code(model_status)
 
         def create_model():
-
             merlin_api_handler.create_model()
 
         exists = False  
@@ -45,7 +44,7 @@ def index():
 
         thread = threading.Thread(target=create_model)
         if status_code == 204:
-            print("I woudl create here")
+            print("I would create here.")
             thread.name = user['id'] 
             thread.start()
 
@@ -53,16 +52,13 @@ def index():
         # db_handler = DBHandler()
         # DBHandler().insert_user(user)
 
-        print("%s seconds" % (time.time() - start_time))
-
-        return jsonify(user=user['display_name'], model_status=model_status), status_code
+        return jsonify(user=user['display_name'], model_status=model_status,
+                       exec_time=get_execution_time(start_time)), status_code
 
     else:
-
-        print("%s seconds" % (time.time() - start_time))
-
         return jsonify(error=True, msg='No access token provided. Retrieve token using the listed URL.',
-                       url=url_for('spotify_blueprint.authorization')), 401
+                       url=url_for('spotify_blueprint.authorization'),
+                       exec_time=get_execution_time(start_time)), 401
 
 
 @spotify_blueprint.route('/authorization', methods=['GET'])
@@ -86,7 +82,6 @@ def authorization():
 
 @spotify_blueprint.route('/users/saved-tracks', methods=['POST'])
 def saved_tracks():
-
     start_time = time.time()
     if 'access_token' in request.form and 'search_term' in request.args:
 
@@ -95,24 +90,19 @@ def saved_tracks():
         is_authenticated = spotify_api_handler.is_authenticated()
 
         if is_authenticated != True:
-
-            return jsonify(error=True, msg=is_authenticated), 401
+            return jsonify(error=True, msg=is_authenticated, exec_time=get_execution_time(start_time)), 401
 
         merlin_api_handler = MerlinAPIHandler(spotify_api_handler)
-
-        print("%s seconds" % (time.time() - start_time))
-
-        return merlin_api_handler.classify_tracks(request.args['search_term']), 200
+        return jsonify(tracks=merlin_api_handler.classify_tracks(request.args['search_term']),
+                       exec_time=get_execution_time(start_time)), 200
 
     elif 'search_term' not in request.args:
-
-        print("%s seconds" % (time.time() - start_time))
-        return {'error': 'Search term missing.'}, 401
+        return jsonify(error=True, msg='Search term missing.', exec_time=get_execution_time(start_time)), 401
 
     else:
-        print("%s seconds" % (time.time() - start_time))
         return jsonify(error=True, msg='No access token provided. Retrieve token using the listed URL.',
-                       url=url_for('spotify_blueprint.authorization')), 401
+                       url=url_for('spotify_blueprint.authorization'),
+                       exec_time=get_execution_time(start_time)), 401
 
 
 @spotify_blueprint.route('/users/recommended', methods=['POST'])
@@ -126,20 +116,19 @@ def recommended():
 
         if is_authenticated != True:
 
-            return jsonify(error=True, msg=is_authenticated), 401
+            return jsonify(error=True, msg=is_authenticated, exec_time=get_execution_time(start_time)), 401
 
         merlin_api_handler = MerlinAPIHandler(spotify_api_handler)
-        print("%s seconds" % (time.time() - start_time))
-        return merlin_api_handler.curated_playlist(request.args['search_term']), 200
+        return jsonify(tracks=merlin_api_handler.curated_playlist(request.args['search_term']),
+                       exec_time=get_execution_time(start_time)), 200
 
     elif 'search_term' not in request.args:
-        print("%s seconds" % (time.time() - start_time))
-        return {'error': 'Search term missing.'}, 401
+        return jsonify(error=True, msg='Search term missing.', exec_time=get_execution_time(start_time)), 401
 
     else:
-        print("%s seconds" % (time.time() - start_time))
         return jsonify(error=True, msg='No access token provided. Retrieve token using the listed URL.',
-                       url=url_for('spotify_blueprint.authorization')), 401
+                       url=url_for('spotify_blueprint.authorization'),
+                       exec_time=get_execution_time(start_time)), 401
 
 
 @spotify_blueprint.route('/users/playlists', methods=['POST'])
@@ -152,20 +141,20 @@ def playlists():
         playlist = spotify_api_handler.create_playlist(request.form['name'])
 
         if 'id' in playlist and 'uris' in request.form:
-            print("%s seconds" % (time.time() - start_time))
-            return spotify_api_handler.add_items_to_playlist(request.form['access_token'], playlist['id'],
-                                                             request.form['uris']), 201
-        print("%s seconds" % (time.time() - start_time))
+            result = spotify_api_handler.add_items_to_playlist(request.form['access_token'], playlist['id'],
+                                                               request.form['uris'])
+            get_execution_time(start_time)
+            return result, 201
+        get_execution_time(start_time)
         return playlist, 201
 
     elif 'name' not in request.form:
-        print("%s seconds" % (time.time() - start_time))
-        return {'error': 'Playlist name missing.'}, 401
+        return jsonify(error=True, msg='Playlist name missing.', exec_time=get_execution_time(start_time)), 401
 
     else:
-        print("%s seconds" % (time.time() - start_time))
         return jsonify(error=True, msg='No access token provided. Retrieve token using the listed URL.',
-                       url=url_for('spotify_blueprint.authorization')), 401
+                       url=url_for('spotify_blueprint.authorization'),
+                       exec_time=get_execution_time(start_time)), 401
 
 
 @spotify_blueprint.route('/users/playlists/<playlist_id>', methods=['POST'])
@@ -174,17 +163,17 @@ def add_items_to_playlist(playlist_id):
     if 'access_token' in request.json and 'uris' in request.json:
 
         spotify_api_handler = SpotifyAPIHandler(request.form['access_token'])
-        print("%s seconds" % (time.time() - start_time))
-        return spotify_api_handler.add_items_to_playlist(playlist_id, request.json['uris']), 201
+        result = spotify_api_handler.add_items_to_playlist(playlist_id, request.json['uris'])
+        get_execution_time(start_time)
+        return result, 201
 
     elif 'uris' not in request.json:
-        print("%s seconds" % (time.time() - start_time))
-        return {'error': 'Uris missing.'}, 401
+        return jsonify(error=True, msg='Uris missing.', exec_time=get_execution_time(start_time)), 401
 
     else:
-        print("%s seconds" % (time.time() - start_time))
         return jsonify(error=True, msg='No access token provided. Retrieve token using the listed URL.',
-                       url=url_for('spotify_blueprint.authorization')), 401
+                       url=url_for('spotify_blueprint.authorization'),
+                       exec_time=get_execution_time(start_time)), 401
 
 
 @spotify_blueprint.route('/users/model', methods=['POST'])
@@ -197,7 +186,7 @@ def check_personal_model():
         is_authenticated = spotify_api_handler.is_authenticated()
 
         if is_authenticated != True:
-            return jsonify(error=True, msg=is_authenticated), 401
+            return jsonify(error=True, msg=is_authenticated, exec_time=get_execution_time(start_time)), 401
 
         merlin_api_handler = MerlinAPIHandler(spotify_api_handler)
 
@@ -206,13 +195,18 @@ def check_personal_model():
         model_status = merlin_api_handler.check_model(user['id'])
 
         status_code = get_model_status_code(model_status)
-        print("%s seconds" % (time.time() - start_time))
-        return jsonify(status=model_status), status_code
+        return jsonify(status=model_status, exec_time=get_execution_time(start_time)), status_code
 
     else:
-        print("%s seconds" % (time.time() - start_time))
         return jsonify(error=True, msg='No access token provided. Retrieve token using the listed URL.',
-                       url=url_for('spotify_blueprint.authorization')), 401
+                       url=url_for('spotify_blueprint.authorization'),
+                       exec_time=get_execution_time(start_time)), 401
+
+
+def get_execution_time(start_time):
+    exec_time = time.time() - start_time
+    print("%s seconds" % exec_time)
+    return exec_time
 
 
 def get_model_status_code(model_status):
