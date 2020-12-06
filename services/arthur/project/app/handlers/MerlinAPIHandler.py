@@ -46,7 +46,7 @@ class MerlinAPIHandler:
 
                 classify_tracks.append({'id': track['track']['id'], 'url': track['track']['preview_url']})
 
-        playlists = self.spotify_api_handler.search_playlist(search_term, limit=1)
+        playlists = self.spotify_api_handler.search_playlist(search_term, limit=12)
 
         playlist_tracks = []
 
@@ -92,7 +92,7 @@ class MerlinAPIHandler:
 
         playlist_tracks = []
 
-        playlists = self.spotify_api_handler.search_playlist(search_term)
+        playlists = self.spotify_api_handler.search_playlist(search_term, limit=12)
 
         for playlist in playlists:
 
