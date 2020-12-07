@@ -18,7 +18,7 @@
             <small class="text-muted">(Get some snacks while you wait)</small>
           </div>
           <div v-else class="form-group col-8">
-            <input v-model="searchTerm" class="form-control google-search" />
+            <input v-model="searchTerm" :disabled="checkModel" class="form-control google-search" />
             <div class="btn-group" v-if="modelExists">
               <b-button variant="primary" @click="createPlaylist()"
                 >Create Playlist</b-button
@@ -29,11 +29,14 @@
             </div>
             <div v-else class="col">
               <h5 class="btn-group text-muted">
-                Please wait while we are creating your model
+                Please wait while we are creating your model.
               </h5>
+              <div>
               {{interval}}
-              <b-button variant="link" @click="checkModel">Force Refresh</b-button>
-              <b-button variant="link" @click="stopTimer">Stop Timer</b-button>
+              </div>
+              <div>
+              <b-button class="text-muted" variant="link" @click="checkModel">Force Refresh</b-button>
+              </div>
             </div>
           </div>
         </div>
