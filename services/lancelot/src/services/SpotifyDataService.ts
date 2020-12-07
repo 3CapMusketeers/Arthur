@@ -32,7 +32,16 @@ class SpotifyDataService {
     const fd = new FormData();
     fd.append("access_token", token);
     fd.append("name", name);
-    fd.append("uris", tracks);
+
+    let trackids: string[] = [];
+
+    tracks.forEach((track: { uri: string; }) => {
+      trackids.push(track.uri);
+    });
+    console.log('tracks: ', trackids);
+    console.log('name: ', name);
+
+    fd.append("uris", trackids);
     return http.post(`/users/playlists`, fd);
   }
 
