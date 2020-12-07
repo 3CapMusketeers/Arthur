@@ -67,6 +67,7 @@ export default class Playlist extends Vue {
   mounted() {
     this.tracks = this.$store.getters.tracks;
     this.$nextTick(function () {
+      //@ts-ignore
       this.$refs.selectableTable.selectAllRows();
     });
   }
@@ -78,15 +79,18 @@ export default class Playlist extends Vue {
     });
   }
 
+  //@ts-ignore
   onRowSelected(items) {
     this.selected = items;
   }
 
   selectAllRows() {
+    //@ts-ignore
     this.$refs.selectableTable.selectAllRows();
   }
 
   clearSelected() {
+    //@ts-ignore
     this.$refs.selectableTable.clearSelected();
   }
 

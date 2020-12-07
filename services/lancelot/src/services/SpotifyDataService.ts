@@ -41,6 +41,7 @@ class SpotifyDataService {
     console.log('tracks: ', trackids);
     console.log('name: ', name);
 
+    //@ts-ignore
     fd.append("uris", trackids);
     return http.post(`/users/playlists`, fd);
   }

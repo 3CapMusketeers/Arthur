@@ -27,6 +27,7 @@
                 >Discover</b-button
               >
             </div>
+
             <div v-else class="col">
               <h5 class="btn-group text-muted">
                 Please wait while we are creating your model.
