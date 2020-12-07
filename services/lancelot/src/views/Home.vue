@@ -117,7 +117,7 @@ export default class Home extends Vue {
     this.loading = true;
     // eslint-disable-next-line
     // @ts-ignore
-    SpotifyDataService.createPlaylist(this.searchTerm, this.token)
+    SpotifyDataService.discover(this.searchTerm, this.token)
       .then(d => {
         this.$store.commit("changeTracks", d.data.tracks);
         console.log(d);
