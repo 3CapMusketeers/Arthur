@@ -141,8 +141,8 @@ def playlists():
         playlist = spotify_api_handler.create_playlist(request.form['name'])
 
         if 'id' in playlist and 'uris' in request.form:
-            result = spotify_api_handler.add_items_to_playlist(request.form['access_token'], playlist['id'],
-                                                               request.form['uris'])
+            result = spotify_api_handler.add_items_to_playlist(playlist['id'], request.form['uris'])
+            print(result)
             get_execution_time(start_time)
             return result, 201
         get_execution_time(start_time)
@@ -160,14 +160,15 @@ def playlists():
 @spotify_blueprint.route('/users/playlists/<playlist_id>', methods=['POST'])
 def add_items_to_playlist(playlist_id):
     start_time = time.time()
-    if 'access_token' in request.json and 'uris' in request.json:
+    if 'access_token' in request.form and 'uris' in request.form:
 
         spotify_api_handler = SpotifyAPIHandler(request.form['access_token'])
-        result = spotify_api_handler.add_items_to_playlist(playlist_id, request.json['uris'])
+
+        result = spotify_api_handler.add_items_to_playlist(playlist_id, request.form['uris'])
         get_execution_time(start_time)
         return result, 201
 
-    elif 'uris' not in request.json:
+    elif 'uris' not in request.form:
         return jsonify(error=True, msg='Uris missing.', exec_time=get_execution_time(start_time)), 401
 
     else:

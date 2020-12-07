@@ -10,8 +10,20 @@ class SpotifyAPIHandler:
         self.spotify_api = SpotifyAPI(access_token)
 
     def add_items_to_playlist(self, playlist_id, uris):
+        uris_parsed = uris.replace('\"', '').replace(' ', '').split(',')
 
-        return self.spotify_api.add_items_to_playlist(playlist_id, uris)
+        chunk = []
+
+        result = None
+
+        for i in range(0, len(uris_parsed)):
+            chunk.append(uris_parsed[i])
+            if len(chunk) == 100 or i == len(uris_parsed) - 1:
+                result = self.spotify_api.add_items_to_playlist(playlist_id, chunk)
+                chunk = []
+
+        return result
+        # return self.spotify_api.add_items_to_playlist(playlist_id, uris)
 
     def create_playlist(self, name):
 
