@@ -14,14 +14,14 @@ services:
 
       # Constant
       - BASE_URL=https://api.spotify.com/v1
-      - MERLIN_BASE_URL=http://localhost:5005/
+      - MERLIN_BASE_URL=http://merlin:5005
       - AUTH_URL=https://accounts.spotify.com/authorize
       - API_TOKEN_URL=https://accounts.spotify.com/api/token
 
       # Your settings go here
       - REDIRECT_URI=http://localhost:5000/authentication
-      - CLIENT_ID=
-      - CLIENT_SECRET=
+#      - CLIENT_ID=
+#      - CLIENT_SECRET=
 
   merlin:
     build:

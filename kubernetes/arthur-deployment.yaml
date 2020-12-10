@@ -4,16 +4,24 @@ metadata:
   annotations:
     kompose.cmd: kompose convert
     kompose.version: 1.21.0 ()
-  creationTimestamp: null
+  creationTimestamp: "2020-10-16T16:09:48Z"
   labels:
     io.kompose.service: arthur
   name: arthur
+  namespace: default
+  resourceVersion: "3882297"
+  selfLink: /api/v1/namespaces/default/services/arthur
+  uid: 3d090138-34bd-4a62-827c-336e9f4f4420
 spec:
+  clusterIP: 10.4.1.184
   ports:
   - name: "5000"
     port: 5000
+    protocol: TCP
     targetPort: 5000
   selector:
     io.kompose.service: arthur
+  sessionAffinity: None
+  type: ClusterIP
 status:
   loadBalancer: {}
